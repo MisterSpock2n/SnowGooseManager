@@ -112,10 +112,14 @@ export default async function PayrollInvoicePage({
     )
   }
 
+const generatedDate = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+}).format(new Date())
 
   const entries = (data ?? []) as PayrollEntry[]
   const employeeName = entries[0] ? getUserName(entries[0]) : 'Employee'
-
   const totalPay = entries.reduce((sum, entry) => sum + (entry.calculated_pay ?? 0), 0)
   const totalHours = entries.reduce((sum, entry) => sum + (entry.hours_worked ?? 0), 0)
   const overnightCount = entries.filter((entry) => entry.entry_type === 'overnight').length
@@ -137,18 +141,18 @@ export default async function PayrollInvoicePage({
     .reduce((sum, entry) => sum + (entry.hours_worked ?? 0), 0)
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <main className="invoice-page min-h-screen bg-gray-50 p-6">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div className="invoice-toolbar flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex gap-3">
-  <Link
-    href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
-    className="inline-flex rounded-md border px-4 py-2 text-sm"
-  >
-    Back to Payroll
-  </Link>
+                <Link
+                    href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
+                            className="inline-flex rounded-md border px-4 py-2 text-sm"
+                >
+                Back to Payroll
+                </Link>
 
-  <InvoiceActions />
+                <InvoiceActions />
 </div>
           <div>
             <h1 className="text-2xl font-semibold">Invoice Preview</h1>
@@ -167,7 +171,7 @@ export default async function PayrollInvoicePage({
           </div>
         </div>
 
-        <section className="rounded-2xl border bg-white p-8 shadow-sm">
+        <section className="invoice-sheet rounded-2xl border bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-6 border-b pb-6 md:flex-row md:items-start md:justify-between">
             <div>
               <h2 className="text-2xl font-bold">Snow Goose Inn</h2>
@@ -179,16 +183,17 @@ export default async function PayrollInvoicePage({
               <div><span className="font-medium">Period:</span> {formatDate(startDate)} - {formatDate(endDate)}</div>
               <div>
                 <span className="font-medium">Generated:</span>{' '}
-                {new Intl.DateTimeFormat('en-US', {
+                {generatedDate}
+                {/* replacing old date with new generated date{new Intl.DateTimeFormat('en-US', {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
-                }).format(new Date())}
+                }).format(new Date())} */}
               </div>
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-4">
+          <div className="invoice-summary mt-6 grid gap-4 md:grid-cols-4">
             <div className="rounded-xl bg-gray-50 p-4">
               <div className="text-sm text-gray-500">Gross pay</div>
               <div className="mt-2 text-xl font-semibold">{formatCurrency(totalPay)}</div>
@@ -212,7 +217,7 @@ export default async function PayrollInvoicePage({
             </div>
           </div>
 
-          <div className="mt-8 overflow-x-auto">
+          <div className="invoice-table-wrap mt-8 overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50 text-left">
                 <tr>
@@ -247,35 +252,156 @@ export default async function PayrollInvoicePage({
             </table>
           </div>
 
-          <div className="mt-8 grid gap-4 border-t pt-6 md:grid-cols-2">
-            <div className="space-y-2 text-sm text-gray-700">
-              <div className="flex justify-between gap-4">
-                <span>Cleaning hours</span>
-                <span className="font-medium">{cleaningHours.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>Maintenance hours</span>
-                <span className="font-medium">{maintenanceHours.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>IT hours</span>
-                <span className="font-medium">{itHours.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>Overnight stays</span>
-                <span className="font-medium">{overnightCount}</span>
-              </div>
-            </div>
+          <div className="invoice-totals mt-8 grid gap-4 border-t pt-6 md:grid-cols-2">
+  <div className="space-y-2 text-sm text-gray-700">
+    <div className="flex justify-between gap-4">
+      <span>Cleaning hours</span>
+      <span className="font-medium">{cleaningHours.toFixed(2)}</span>
+    </div>
+    <div className="flex justify-between gap-4">
+      <span>Maintenance hours</span>
+      <span className="font-medium">{maintenanceHours.toFixed(2)}</span>
+    </div>
+    <div className="flex justify-between gap-4">
+      <span>IT hours</span>
+      <span className="font-medium">{itHours.toFixed(2)}</span>
+    </div>
+    <div className="flex justify-between gap-4">
+      <span>Overnight stays</span>
+      <span className="font-medium">{overnightCount}</span>
+    </div>
+  </div>
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span>Total gross pay</span>
-                <span className="text-lg font-semibold">{formatCurrency(totalPay)}</span>
-              </div>
+  <div className="invoice-total-box rounded-xl bg-gray-50 p-4">
+    <div className="flex items-center justify-between text-sm">
+      <span>Total gross pay</span>
+      <span className="text-lg font-semibold">{formatCurrency(totalPay)}</span>
+    </div>
+  </div>
+</div>
+            <div className="invoice-footer mt-8 border-t pt-4 text-sm text-gray-500">
+                    Generated on {generatedDate} · Snow Goose Inn Payroll Invoice
             </div>
-          </div>
         </section>
       </div>
+      <style>{`
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+
+    html, body {
+      background: white !important;
+    }
+
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .invoice-page {
+      background: white !important;
+      padding: 0 !important;
+      min-height: auto !important;
+    }
+
+    .invoice-toolbar {
+      display: none !important;
+    }
+
+    .invoice-sheet {
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: white !important;
+    }
+
+    .invoice-summary {
+      margin-top: 1rem !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .invoice-summary > div,
+    .invoice-totals,
+    .invoice-totals > div {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .invoice-table-wrap {
+      overflow: visible !important;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tfoot {
+      display: table-footer-group;
+    }
+
+    tr, td, th {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    th, td {
+      padding: 8px 6px !important;
+      vertical-align: top;
+      word-break: break-word;
+    }
+
+    .bg-gray-50 {
+      background: #f8f8f8 !important;
+    }
+
+    .shadow-sm,
+    .rounded-xl,
+    .rounded-2xl,
+    .border {
+      box-shadow: none !important;
+    }
+
+    a {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+      .invoice-sheet {
+  padding-bottom: 40px !important;
+}
+
+.invoice-totals {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+.invoice-total-box {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+.invoice-footer {
+  margin-top: 24px !important;
+  padding-top: 12px !important;
+  font-size: 11px !important;
+  color: #666 !important;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+  }
+`}</style>
     </main>
   )
 }
