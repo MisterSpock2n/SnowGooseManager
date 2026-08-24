@@ -126,14 +126,16 @@ export default function TimePage() {
   }, [])
 
   useEffect(() => {
-    if (entryType === 'hourly') {
-      if (workType === 'it') {
-        setRateApplied('75')
-      } else {
-        setRateApplied('40')
-      }
-    }
-  }, [entryType, workType])
+  if (entryType !== 'hourly') return
+
+  if (workType === 'it') {
+    setRateApplied('75')
+  } else if (workType === 'general') {
+    setRateApplied('25')
+  } else {
+    setRateApplied('40')
+  }
+}, [entryType, workType])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -185,6 +187,29 @@ if (entryType === 'hourly') {
     calculated_pay: calculatedPay,
     notes: notes || null,
   }
+}
+
+async function handleDeleteEntry(entryId: string) {
+  const confirmed = window.confirm('Delete this time entry?')
+  if (!confirmed) return
+
+  setLoading(true)
+  setMessage('')
+
+  const { error } = await supabase
+    .from('time_entries')
+    .delete()
+    .eq('id', entryId)
+
+  if (error) {
+    setMessage(`Could not delete time entry: ${error.message}`)
+    setLoading(false)
+    return
+  }
+
+  setMessage('Time entry deleted.')
+  await loadEntries()
+  setLoading(false)
 }
 
     const { error } = await supabase.from('time_entries').insert(payload)
@@ -376,8 +401,9 @@ if (entryType === 'hourly') {
               style={{
                 border: '1px solid #e5e7eb',
                 borderRadius: '10px',
-                padding: '12px 16px',
+                padding: '16px 20px',
                 background: entry.entry_type === 'overnight' ? '#fff7ed' : '#f8fafc',
+                lineHeight: '1.5'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
