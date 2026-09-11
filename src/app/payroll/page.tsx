@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 
@@ -63,6 +64,13 @@ export default async function PayrollPage({
   const selectedUserId = params.user || ''
 
   const supabase = await createClient()
+
+  const { data: claimsData, error: claimsError } =
+  await supabase.auth.getClaims()
+
+if (claimsError || !claimsData?.claims) {
+  redirect('/login')
+} 
 
   const { data: usersData, error: usersError } = await supabase
     .from('users')

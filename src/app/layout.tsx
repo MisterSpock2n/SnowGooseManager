@@ -1,4 +1,5 @@
 import React from 'react';
+import LogoutButton from '@/components/LogoutButton'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <aside style={{ background: '#0f172a', color: 'white', padding: 24 }}>
             <h1 style={{ fontSize: 20, marginTop: 0 }}>Snow Goose Ops</h1>
             <nav style={{ display: 'grid', gap: 12 }}>
+              <LogoutButton />
               <a href="/dashboard" style={{ color: 'white' }}>Dashboard</a>
               <a href="/time" style={{ color: 'white' }}>Time</a>
               <a href="/payroll" style={{ color: 'white' }}>Payroll</a>

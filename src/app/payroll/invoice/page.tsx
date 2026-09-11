@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import InvoiceActions from './InvoiceActions'
 import { createClient } from '@/lib/supabase/server'
 
@@ -67,6 +68,15 @@ export default async function PayrollInvoicePage({
   const startDate = params.start ?? ''
   const endDate = params.end ?? ''
 
+  const supabase = await createClient()
+
+  const { data: claimsData, error: claimsError } =
+  await supabase.auth.getClaims()
+
+if (claimsError || !claimsData?.claims) {
+  redirect('/login')
+}
+
   if (!userId || !startDate || !endDate) {
     return (
       <main className="p-6">
@@ -78,7 +88,9 @@ export default async function PayrollInvoicePage({
     )
   }
 
-  const supabase = await createClient()
+  
+
+  
 
   const { data, error } = await supabase
     .from('time_entries')
