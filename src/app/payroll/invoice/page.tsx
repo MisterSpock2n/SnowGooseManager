@@ -164,22 +164,17 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
                 Back to Payroll
                 </Link>
 
-                <InvoiceActions />
+                <InvoiceActions
+  userId={userId}
+  startDate={startDate}
+  endDate={endDate}
+/>
 </div>
           <div>
             <h1 className="text-2xl font-semibold">Invoice Preview</h1>
             <p className="mt-1 text-sm text-gray-600">
               Payroll invoice for {employeeName}
             </p>
-          </div>
-
-          <div className="flex gap-3">
-            <Link
-              href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
-              className="inline-flex rounded-md border px-4 py-2 text-sm"
-            >
-              Back to Payroll
-            </Link>
           </div>
         </div>
 
