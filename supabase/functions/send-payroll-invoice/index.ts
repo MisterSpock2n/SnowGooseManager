@@ -1,12 +1,12 @@
-/* import { corsHeaders } from 'npm:@supabase/supabase-js@^2/cors'
-import { createClient } from 'npm:@supabase/supabase-js@2' */
-const corsHeaders = {
+import { corsHeaders } from 'npm:@supabase/supabase-js@^2/cors'
+import { createClient } from 'npm:@supabase/supabase-js@2'
+/* const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://snowgoose.warpninedesigns.com',
   'Access-Control-Allow-Headers':
     'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
-
+ */
 const APP_URL = 'https://snowgoose.warpninedesigns.com'
 const RECIPIENT = 'info@snowgooseinn.com'
 const FROM = 'Snow Goose Payroll <payroll@notifications.warpninedesigns.com>'
