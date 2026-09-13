@@ -1,6 +1,9 @@
+/* import { corsHeaders } from 'npm:@supabase/supabase-js@^2/cors'
+import { createClient } from 'npm:@supabase/supabase-js@2' */
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://snowgoose.warpninedesigns.com',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
@@ -26,6 +29,12 @@ function json(body: unknown, status = 200) {
 }
 
 Deno.serve(async (request: Request) => {
+    /* const origin = request.headers.get('origin')
+
+  if (origin && origin !== APP_URL) {
+    return new Response('Forbidden', { status: 403 })
+  } */
+
   if (request.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -34,11 +43,34 @@ Deno.serve(async (request: Request) => {
     return json({ error: 'Method not allowed' }, 405)
   }
 
-  const authHeader = request.headers.get('authorization')
+ const authHeader = request.headers.get('authorization')
 
-  if (!authHeader?.startsWith('Bearer ')) {
-    return json({ error: 'Unauthorized' }, 401)
-  }
+if (!authHeader?.startsWith('Bearer ')) {
+  return json({ error: 'Unauthorized' }, 401)
+}
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  return json({ error: 'Supabase configuration is incomplete.' }, 500)
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    headers: {
+      Authorization: authHeader,
+    },
+  },
+})
+
+const token = authHeader.replace('Bearer ', '')
+const { data: userData, error: userError } =
+  await supabase.auth.getUser(token)
+
+if (userError || !userData.user) {
+  return json({ error: 'Unauthorized' }, 401)
+}
 
   const { userId, startDate, endDate }: EmailInvoiceRequest =
     await request.json()

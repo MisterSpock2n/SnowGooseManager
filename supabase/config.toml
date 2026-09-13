@@ -1,0 +1,2 @@
+[functions.send-payroll-invoice]
+verify_jwt = false
