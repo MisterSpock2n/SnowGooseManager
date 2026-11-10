@@ -3,7 +3,18 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import MaintenanceNav from '@/components/maintenance/MaintenanceNav'
 import PriorityBadge from '@/components/maintenance/PriorityBadge'
-import { STATUS_LABELS, daysOpen, formatDateTime, isOverdue, one, priorityInfo, type MafStatus } from '@/lib/maintenance'
+import MafActions from './MafActions'
+import {
+  STATUS_LABELS,
+  daysOpen,
+  formatDateTime,
+  isOverdue,
+  one,
+  priorityInfo,
+  type Assignee,
+  type MafStatus,
+  type Priority,
+} from '@/lib/maintenance'
 
 type MafDetail = {
   id: string
@@ -18,6 +29,9 @@ type MafDetail = {
   completion_notes: string | null
   completed_at: string | null
   verified_at: string | null
+  completed_by_name: string | null
+  verified_by_name: string | null
+  assigned_to: string
   cost: number | null
   maintenance_locations: { name: string } | { name: string }[] | null
   maintenance_assignees:
@@ -26,7 +40,14 @@ type MafDetail = {
     | null
 }
 
-type EventRow = { id: string; event: string; from_value: string | null; to_value: string | null; created_at: string }
+type EventRow = {
+  id: string
+  event: string
+  from_value: string | null
+  to_value: string | null
+  by_name: string | null
+  created_at: string
+}
 
 const EVENT_LABELS: Record<string, string> = {
   created: 'Created',
@@ -58,12 +79,16 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
 
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
 
-  const [{ data, error }, { data: events }] = await Promise.all([
+  const email = String(claimsData.claims.email ?? '')
+  const currentUserId = String(claimsData.claims.sub ?? '')
+
+  const [{ data, error }, { data: events }, { data: assignees }, { data: role }] = await Promise.all([
     supabase
       .from('maintenance_actions')
       .select(
         `id, maf_number, description, priority, status, room_out_of_service, discovered_at,
          initiated_by_name, location_detail, completion_notes, completed_at, verified_at, cost,
+         completed_by_name, verified_by_name, assigned_to,
          maintenance_locations(name),
          maintenance_assignees(name, kind, role_label, phone)`
       )
@@ -71,9 +96,11 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       .maybeSingle(),
     supabase
       .from('maintenance_action_events')
-      .select('id, event, from_value, to_value, created_at')
+      .select('id, event, from_value, to_value, by_name, created_at')
       .eq('action_id', id)
       .order('created_at', { ascending: true }),
+    supabase.from('maintenance_assignees').select('id, name, kind, role_label, phone').eq('active', true).order('sort_order'),
+    supabase.from('staff_roles').select('can_close_maf').ilike('email', email).maybeSingle(),
   ])
 
   if (error) {
@@ -126,12 +153,33 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
         <Row label="Corrective action / notes">
           {maf.completion_notes ? <div style={{ whiteSpace: 'pre-wrap' }}>{maf.completion_notes}</div> : <span style={{ color: '#9ca3af' }}>None yet</span>}
         </Row>
-        {maf.completed_at ? <Row label="Completed">{formatDateTime(maf.completed_at)}</Row> : null}
-        {maf.verified_at ? <Row label="Verified">{formatDateTime(maf.verified_at)}</Row> : null}
+        {maf.cost !== null ? <Row label="Cost">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(maf.cost)}</Row> : null}
+        {maf.verified_at ? (
+          <Row label="Verified by">
+            {maf.verified_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(maf.verified_at)}</span>
+          </Row>
+        ) : null}
+        {maf.completed_at ? (
+          <Row label={maf.status === 'cancelled' ? 'Cancelled by' : 'Completed by'}>
+            {maf.completed_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(maf.completed_at)}</span>
+          </Row>
+        ) : null}
       </div>
 
-      <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e3a8a', padding: '12px 16px', borderRadius: 10, marginTop: 16, fontSize: 14 }}>
-        Status changes, reassigning, and closing with completion notes are coming in the next build phase (1.5.0-b).
+      <div style={{ marginTop: 16 }}>
+        <MafActions
+          mafId={maf.id}
+          mafNumber={maf.maf_number}
+          status={maf.status}
+          priority={maf.priority as Priority}
+          assignedTo={maf.assigned_to}
+          completionNotes={maf.completion_notes}
+          cost={maf.cost}
+          isVendor={Boolean(assignee && assignee.kind !== 'staff')}
+          canClose={Boolean(role?.can_close_maf)}
+          currentUserId={currentUserId}
+          assignees={(assignees as Assignee[] | null) ?? []}
+        />
       </div>
 
       <h2 style={{ fontSize: '1.2rem', marginTop: 28 }}>History</h2>
@@ -140,9 +188,14 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
           <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9', fontSize: 14 }}>
             <span>
               <strong>{EVENT_LABELS[ev.event] ?? ev.event}</strong>
-              {ev.event === 'status_changed' && ev.from_value && ev.to_value
+              {(ev.event === 'status_changed' || ev.event === 'reopened') && ev.from_value && ev.to_value
                 ? ` — ${STATUS_LABELS[ev.from_value as MafStatus] ?? ev.from_value} → ${STATUS_LABELS[ev.to_value as MafStatus] ?? ev.to_value}`
                 : ''}
+              {(ev.event === 'reassigned' || ev.event === 'priority_changed') && ev.to_value
+                ? ` — ${ev.from_value ?? '—'} → ${ev.to_value}`
+                : ''}
+              {ev.event === 'completed' && ev.from_value ? ` — from ${STATUS_LABELS[ev.from_value as MafStatus] ?? ev.from_value}` : ''}
+              {ev.by_name ? <span style={{ color: '#6b7280' }}> by {ev.by_name}</span> : null}
             </span>
             <span style={{ color: '#6b7280' }}>{formatDateTime(ev.created_at)}</span>
           </div>
