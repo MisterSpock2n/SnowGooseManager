@@ -1,5 +1,6 @@
 import React from 'react';
 import LogoutButton from '@/components/LogoutButton'
+import { version } from '../../package.json'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/inventory" style={{ color: 'white' }}>Inventory</a>
               <a href="/maintenance" style={{ color: 'white' }}>Maintenance</a>
             </nav>
+            <div style={{ marginTop: 24, fontSize: 12, color: '#94a3b8' }}>v{version}</div>
           </aside>
           <main style={{ padding: 24 }}>{children}</main>
         </div>
