@@ -5,7 +5,7 @@ type Tab = 'open' | 'new' | 'archive' | 'invoices'
 const tabs: { key: Tab; label: string; href: string | null }[] = [
   { key: 'open', label: 'Open MAFs', href: '/maintenance' },
   { key: 'new', label: 'New MAF', href: '/maintenance/new' },
-  { key: 'archive', label: 'Archive', href: null },
+  { key: 'archive', label: 'Archive', href: '/maintenance/archive' },
   { key: 'invoices', label: 'Invoices for Jon', href: null },
 ]
 
