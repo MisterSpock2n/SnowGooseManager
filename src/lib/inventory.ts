@@ -70,3 +70,14 @@ export function plural(unit: string, n: number) {
   if (unit === 'loaf') return 'loaves'
   return `${unit}s`
 }
+
+export function isLowOrOut(item: Pick<InventoryItem, 'quantity_on_hand' | 'reorder_level' | 'last_counted_at'>) {
+  const s = stockState(item)
+  return s === 'low' || s === 'out'
+}
+
+// Usual order amount if set, otherwise enough to get back to about twice the low-stock level
+export function suggestedBuy(item: Pick<InventoryItem, 'quantity_on_hand' | 'reorder_level' | 'reorder_quantity'>) {
+  if (item.reorder_quantity) return Number(item.reorder_quantity)
+  return Math.max(1, Math.ceil(Number(item.reorder_level) * 2 - Number(item.quantity_on_hand)))
+}
