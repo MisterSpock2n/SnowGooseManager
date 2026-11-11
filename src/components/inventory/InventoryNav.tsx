@@ -5,7 +5,7 @@ type Tab = 'stock' | 'new' | 'shopping' | 'count'
 const tabs: { key: Tab; label: string; href: string | null }[] = [
   { key: 'stock', label: 'Stock', href: '/inventory' },
   { key: 'new', label: 'Add item', href: '/inventory/new' },
-  { key: 'shopping', label: 'Shopping list', href: null },
+  { key: 'shopping', label: 'Shopping list', href: '/inventory/shopping' },
   { key: 'count', label: 'Count sheet', href: null },
 ]
 

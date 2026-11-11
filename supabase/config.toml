@@ -2,3 +2,6 @@
 verify_jwt = false
 [functions.notify-owner-invoice]
 verify_jwt = false
+
+[functions.notify-low-stock]
+verify_jwt = false
