@@ -1,5 +1,21 @@
 -- Snow Goose App 1.6.0: Inventory items, stock movements, low-stock flags
 
+-- Replace the unused placeholder inventory tables from the original schema.
+-- Safety check: stop if either table has any data.
+do $$
+begin
+  if to_regclass('public.inventory_transactions') is not null
+     and exists (select 1 from public.inventory_transactions) then
+    raise exception 'inventory_transactions has data; not replacing it';
+  end if;
+  if to_regclass('public.inventory_items') is not null
+     and exists (select 1 from public.inventory_items) then
+    raise exception 'inventory_items has data; not replacing it';
+  end if;
+end $$;
+drop table if exists public.inventory_transactions;
+drop table if exists public.inventory_items;
+
 create table if not exists public.inventory_items (
   id uuid primary key default gen_random_uuid(),
   name text not null check (length(btrim(name)) > 0),
