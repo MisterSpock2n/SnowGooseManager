@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import PrioritySelect from '@/components/maintenance/PrioritySelect'
+import PhotoPicker from '@/components/maintenance/PhotoPicker'
+import { uploadMafPhotos } from '@/lib/photos'
 import type { Assignee, Location, Priority } from '@/lib/maintenance'
 
 function nowForInput() {
@@ -35,6 +37,7 @@ export default function NewMafForm({
   const [description, setDescription] = useState('')
   const [roomOutOfService, setRoomOutOfService] = useState(false)
   const [discoveredAt, setDiscoveredAt] = useState(nowForInput())
+  const [photos, setPhotos] = useState<File[]>([])
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -79,13 +82,24 @@ export default function NewMafForm({
         initiated_by: userData.user.id,
         initiated_by_name: initiatedByName,
       })
-      .select('maf_number')
+      .select('id, maf_number')
       .single()
 
     if (error) {
       setMessage(`Could not create MAF: ${error.message}`)
       setSaving(false)
       return
+    }
+
+    if (photos.length) {
+      setMessage(`Uploading ${photos.length} photo${photos.length === 1 ? '' : 's'}…`)
+      const { errors } = await uploadMafPhotos(supabase, data.id, photos, 'before')
+      if (errors.length) {
+        // MAF is saved; send them to it so they can retry the photos
+        router.push(`/maintenance/${data.id}`)
+        router.refresh()
+        return
+      }
     }
 
     router.push(`/maintenance?created=${encodeURIComponent(data.maf_number)}`)
@@ -187,12 +201,27 @@ export default function NewMafForm({
         This issue puts the room out of service (can&apos;t be sold until fixed)
       </label>
 
+      <div style={{ display: 'grid', gap: 6 }}>
+        <span style={labelStyle}>
+          Photos <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+        </span>
+        <PhotoPicker files={photos} onChange={setPhotos} />
+      </div>
+
       <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 16, color: '#6b7280', fontSize: 14 }}>
         Completion notes (part numbers, steps taken, vendor details) are added by whoever closes the MAF, from its detail page.
       </div>
 
       {message ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }}>{message}</div>
+        <div
+          style={
+            message.startsWith('Uploading')
+              ? { background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e3a8a', padding: '10px 14px', borderRadius: 8 }
+              : { background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }
+          }
+        >
+          {message}
+        </div>
       ) : null}
 
       <div>

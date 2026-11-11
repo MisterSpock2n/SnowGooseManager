@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import MaintenanceNav from '@/components/maintenance/MaintenanceNav'
 import PriorityBadge from '@/components/maintenance/PriorityBadge'
 import MafActions from './MafActions'
+import MafPhotos, { type PhotoItem } from './MafPhotos'
+import { PHOTO_BUCKET } from '@/lib/photos'
 import {
   STATUS_LABELS,
   daysOpen,
@@ -82,7 +84,7 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
   const email = String(claimsData.claims.email ?? '')
   const currentUserId = String(claimsData.claims.sub ?? '')
 
-  const [{ data, error }, { data: events }, { data: assignees }, { data: role }] = await Promise.all([
+  const [{ data, error }, { data: events }, { data: assignees }, { data: role }, { data: photoRows }] = await Promise.all([
     supabase
       .from('maintenance_actions')
       .select(
@@ -101,6 +103,11 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       .order('created_at', { ascending: true }),
     supabase.from('maintenance_assignees').select('id, name, kind, role_label, phone').eq('active', true).order('sort_order'),
     supabase.from('staff_roles').select('can_close_maf').ilike('email', email).maybeSingle(),
+    supabase
+      .from('maintenance_photos')
+      .select('id, storage_path, kind, uploaded_by, uploaded_by_name, created_at')
+      .eq('action_id', id)
+      .order('created_at', { ascending: true }),
   ])
 
   if (error) {
@@ -109,6 +116,17 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
   if (!data) notFound()
 
   const maf = data as MafDetail
+  const isClosed = maf.status === 'completed' || maf.status === 'cancelled'
+
+  const rawPhotos = (photoRows as Omit<PhotoItem, 'url'>[] | null) ?? []
+  let photos: PhotoItem[] = rawPhotos.map((p) => ({ ...p, url: null }))
+  if (rawPhotos.length) {
+    const { data: signed } = await supabase.storage
+      .from(PHOTO_BUCKET)
+      .createSignedUrls(rawPhotos.map((p) => p.storage_path), 60 * 60)
+    const byPath = new Map((signed ?? []).map((s) => [s.path, s.signedUrl]))
+    photos = rawPhotos.map((p) => ({ ...p, url: byPath.get(p.storage_path) ?? null }))
+  }
   const p = priorityInfo(maf.priority)
   const assignee = one(maf.maintenance_assignees)
   const location = one(maf.maintenance_locations)?.name ?? '—'
@@ -117,7 +135,9 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto' }}>
-      <Link href="/maintenance" style={{ fontSize: 14 }}>← Back to open MAFs</Link>
+      <Link href={isClosed ? '/maintenance/archive' : '/maintenance'} style={{ fontSize: 14 }}>
+        ← Back to {isClosed ? 'archive' : 'open MAFs'}
+      </Link>
       <h1 style={{ fontSize: '2rem', margin: '8px 0' }}>{maf.maf_number}</h1>
       <MaintenanceNav />
 
@@ -179,6 +199,16 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
           canClose={Boolean(role?.can_close_maf)}
           currentUserId={currentUserId}
           assignees={(assignees as Assignee[] | null) ?? []}
+        />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <MafPhotos
+          actionId={maf.id}
+          photos={photos}
+          canManage={Boolean(role?.can_close_maf)}
+          currentUserId={currentUserId}
+          defaultKind={isClosed || maf.status === 'awaiting_verification' ? 'after' : 'before'}
         />
       </div>
 
