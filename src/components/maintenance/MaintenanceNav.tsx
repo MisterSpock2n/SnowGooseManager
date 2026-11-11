@@ -6,7 +6,7 @@ const tabs: { key: Tab; label: string; href: string | null }[] = [
   { key: 'open', label: 'Open MAFs', href: '/maintenance' },
   { key: 'new', label: 'New MAF', href: '/maintenance/new' },
   { key: 'archive', label: 'Archive', href: '/maintenance/archive' },
-  { key: 'invoices', label: 'Invoices for Jon', href: null },
+  { key: 'invoices', label: 'Invoices for Jon', href: '/maintenance/invoices' },
 ]
 
 export default function MaintenanceNav({ active }: { active?: Tab }) {
