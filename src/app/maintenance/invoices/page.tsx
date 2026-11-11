@@ -182,6 +182,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                   <InvoiceStatusBadge status={inv.status} />
                   {late ? <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>Past due</span> : null}
                   {maf ? <span style={{ fontSize: 12, color: '#374151', background: '#f1f5f9', padding: '2px 8px', borderRadius: 999 }}>{maf.maf_number}</span> : null}
+                  {inv.notify_status === 'failed' ? <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fff1f2', border: '1px solid #fecaca', padding: '1px 8px', borderRadius: 999 }}>Alert failed</span> : null}
+                  {inv.notify_status === 'pending' && inv.status === 'new' ? <span style={{ fontSize: 12, color: '#6b7280', border: '1px solid #e5e7eb', padding: '1px 8px', borderRadius: 999 }}>Alert not sent</span> : null}
                 </div>
                 <div style={{ fontSize: 13, color: '#6b7280' }}>
                   {inv.invoice_number ? `#${inv.invoice_number} · ` : ''}Dated {formatDate(inv.invoice_date)}

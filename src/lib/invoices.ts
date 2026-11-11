@@ -67,3 +67,28 @@ export async function uploadInvoiceFiles(
   }
   return { uploaded, errors }
 }
+
+// Ask the notify-owner-invoice Edge Function to email Jon about an invoice
+export async function notifyJon(
+  supabase: SupabaseClient,
+  invoiceId: string,
+  resend = false
+): Promise<{ ok: boolean; skipped?: boolean; message: string }> {
+  const { data, error } = await supabase.functions.invoke('notify-owner-invoice', { body: { invoiceId, resend } })
+  if (error) {
+    let detail = error.message
+    const ctx = (error as { context?: Response }).context
+    if (ctx && typeof ctx.json === 'function') {
+      try {
+        const body = await ctx.json()
+        detail = [body?.error, body?.detail].filter(Boolean).join(' — ') || detail
+      } catch {
+        // keep the generic message
+      }
+    }
+    return { ok: false, message: detail }
+  }
+  if (data?.skipped) return { ok: true, skipped: true, message: data.reason ?? 'Already sent.' }
+  if (!data?.success) return { ok: false, message: data?.error ?? 'Could not send the alert.' }
+  return { ok: true, message: 'Email alert sent to Jon.' }
+}
