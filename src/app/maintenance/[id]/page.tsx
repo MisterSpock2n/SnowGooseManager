@@ -6,6 +6,8 @@ import PriorityBadge from '@/components/maintenance/PriorityBadge'
 import MafActions from './MafActions'
 import MafPhotos, { type PhotoItem } from './MafPhotos'
 import { PHOTO_BUCKET } from '@/lib/photos'
+import InvoiceStatusBadge from '@/components/maintenance/InvoiceStatusBadge'
+import { currency, formatDate } from '@/lib/invoices'
 import {
   STATUS_LABELS,
   daysOpen,
@@ -84,7 +86,7 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
   const email = String(claimsData.claims.email ?? '')
   const currentUserId = String(claimsData.claims.sub ?? '')
 
-  const [{ data, error }, { data: events }, { data: assignees }, { data: role }, { data: photoRows }] = await Promise.all([
+  const [{ data, error }, { data: events }, { data: assignees }, { data: role }, { data: photoRows }, { data: invoiceRows }] = await Promise.all([
     supabase
       .from('maintenance_actions')
       .select(
@@ -108,6 +110,11 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       .select('id, storage_path, kind, uploaded_by, uploaded_by_name, created_at')
       .eq('action_id', id)
       .order('created_at', { ascending: true }),
+    supabase
+      .from('owner_invoices')
+      .select('id, vendor_name, amount, invoice_date, status')
+      .eq('related_action_id', id)
+      .order('invoice_date', { ascending: false }),
   ])
 
   if (error) {
@@ -210,6 +217,25 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
           currentUserId={currentUserId}
           defaultKind={isClosed || maf.status === 'awaiting_verification' ? 'after' : 'before'}
         />
+      </div>
+
+      <div style={{ marginTop: 16, background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Invoices for Jon</h2>
+          <Link href={`/maintenance/invoices/new?maf=${maf.id}`} style={{ fontSize: 14, fontWeight: 600 }}>+ Log an invoice for this MAF</Link>
+        </div>
+        {((invoiceRows as { id: string; vendor_name: string; amount: number; invoice_date: string; status: string }[] | null) ?? []).length === 0 ? (
+          <p style={{ margin: 0, color: '#6b7280' }}>No invoices linked to this MAF.</p>
+        ) : (
+          ((invoiceRows as { id: string; vendor_name: string; amount: number; invoice_date: string; status: string }[] | null) ?? []).map((inv) => (
+            <Link key={inv.id} href={`/maintenance/invoices/${inv.id}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '8px 0', borderBottom: '1px solid #f1f5f9', textDecoration: 'none', color: 'inherit' }}>
+              <span>
+                <strong>{inv.vendor_name}</strong> <span style={{ color: '#6b7280' }}>· {formatDate(inv.invoice_date)}</span> <InvoiceStatusBadge status={inv.status} />
+              </span>
+              <strong>{currency.format(Number(inv.amount))}</strong>
+            </Link>
+          ))
+        )}
       </div>
 
       <h2 style={{ fontSize: '1.2rem', marginTop: 28 }}>History</h2>
