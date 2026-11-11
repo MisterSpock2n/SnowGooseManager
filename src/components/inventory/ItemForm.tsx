@@ -10,12 +10,19 @@ const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid #
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
 const optional = <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
 
-export default function ItemForm({ item, onDone }: { item?: InventoryItem; onDone?: () => void }) {
+const OTHER_UNIT = '__other__'
+
+export default function ItemForm({ item, onDone, unitsInUse = [] }: { item?: InventoryItem; onDone?: () => void; unitsInUse?: string[] }) {
   const router = useRouter()
   const isEdit = Boolean(item)
   const [name, setName] = useState(item?.name ?? '')
   const [category, setCategory] = useState<InventoryCategory | ''>(item?.category ?? '')
-  const [unit, setUnit] = useState(item?.unit ?? 'each')
+  // Your main units first, then any other units already used by items (e.g. box, roll), then Other…
+  const unitOptions = Array.from(new Set([...COMMON_UNITS, ...unitsInUse.map((u) => u.trim()).filter(Boolean).sort()]))
+  const startUnit = item?.unit ?? 'each'
+  const [unitChoice, setUnitChoice] = useState(unitOptions.includes(startUnit) ? startUnit : OTHER_UNIT)
+  const [customUnit, setCustomUnit] = useState(unitOptions.includes(startUnit) ? '' : startUnit)
+  const unit = unitChoice === OTHER_UNIT ? customUnit : unitChoice
   const [startQty, setStartQty] = useState('')
   const [reorderLevel, setReorderLevel] = useState(item ? String(item.reorder_level) : '')
   const [reorderQty, setReorderQty] = useState(item?.reorder_quantity != null ? String(item.reorder_quantity) : '')
@@ -30,6 +37,7 @@ export default function ItemForm({ item, onDone }: { item?: InventoryItem; onDon
     e.preventDefault()
     setMessage('')
     if (!category) return setMessage('Please choose a category.')
+    if (!unit.trim()) return setMessage('Please type what this item is counted in.')
     const level = reorderLevel === '' ? 0 : Number(reorderLevel)
     const rq = reorderQty === '' ? null : Number(reorderQty)
     const sq = startQty === '' ? null : Number(startQty)
@@ -42,7 +50,7 @@ export default function ItemForm({ item, onDone }: { item?: InventoryItem; onDon
     const fields = {
       name: name.trim(),
       category,
-      unit: unit.trim() || 'each',
+      unit: unit.trim().toLowerCase(),
       reorder_level: level,
       reorder_quantity: rq,
       storage_location: storage.trim() || null,
@@ -76,11 +84,6 @@ export default function ItemForm({ item, onDone }: { item?: InventoryItem; onDon
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16, background: 'white', borderRadius: 12, padding: 24 }}>
-      <datalist id="unitOptions">
-        {COMMON_UNITS.map((u) => (
-          <option key={u} value={u} />
-        ))}
-      </datalist>
       <datalist id="storageOptions">
         {STORAGE_SUGGESTIONS.map((s) => (
           <option key={s} value={s} />
@@ -106,7 +109,15 @@ export default function ItemForm({ item, onDone }: { item?: InventoryItem; onDon
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
         <div style={fieldStyle}>
           <label htmlFor="unit" style={labelStyle}>Counted in</label>
-          <input id="unit" list="unitOptions" value={unit} onChange={(e) => setUnit(e.target.value)} required placeholder="each, box, case…" style={inputStyle} />
+          <select id="unit" value={unitChoice} onChange={(e) => setUnitChoice(e.target.value)} required style={inputStyle}>
+            {unitOptions.map((u) => (
+              <option key={u} value={u}>{u}</option>
+            ))}
+            <option value={OTHER_UNIT}>Other…</option>
+          </select>
+          {unitChoice === OTHER_UNIT ? (
+            <input value={customUnit} onChange={(e) => setCustomUnit(e.target.value)} required autoFocus placeholder="e.g. box, roll, bottle" aria-label="Other unit" style={inputStyle} />
+          ) : null}
         </div>
         {!isEdit ? (
           <div style={fieldStyle}>

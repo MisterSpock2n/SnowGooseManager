@@ -38,7 +38,7 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
   const email = String(claimsData.claims.email ?? '')
 
-  const [{ data, error }, { data: txns }, { data: role }] = await Promise.all([
+  const [{ data, error }, { data: txns }, { data: role }, { data: unitRows }] = await Promise.all([
     supabase
       .from('inventory_items')
       .select('id, name, category, unit, quantity_on_hand, reorder_level, reorder_quantity, storage_location, vendor, reorder_url, notes, active, last_counted_at, updated_at')
@@ -51,6 +51,7 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
       .order('created_at', { ascending: false })
       .limit(100),
     supabase.from('staff_roles').select('can_close_maf').ilike('email', email).maybeSingle(),
+    supabase.from('inventory_items').select('unit'),
   ])
 
   if (error) return <p style={{ color: '#991b1b' }}>Could not load item: {error.message}</p>
@@ -97,7 +98,7 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
       ) : null}
 
       <div style={{ marginTop: 16 }}>
-        <ItemManage item={item} canDelete={Boolean(role?.can_close_maf)} hasHistory={history.length > 0} />
+        <ItemManage item={item} canDelete={Boolean(role?.can_close_maf)} hasHistory={history.length > 0} unitsInUse={Array.from(new Set(((unitRows as { unit: string }[] | null) ?? []).map((r) => r.unit)))} />
       </div>
 
       <h2 style={{ fontSize: '1.2rem', marginTop: 28 }}>History</h2>

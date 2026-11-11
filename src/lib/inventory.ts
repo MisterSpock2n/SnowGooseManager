@@ -12,7 +12,8 @@ export function categoryInfo(c: string) {
   return CATEGORIES.find((x) => x.value === c) ?? CATEGORIES[0]
 }
 
-export const COMMON_UNITS = ['each', 'box', 'case', 'pack', 'roll', 'bottle', 'jug', 'can', 'tube', 'bag', 'set', 'gallon', 'quart', 'lb', 'dozen', 'loaf', 'sleeve', 'tub']
+// Main choices in the "Counted in" dropdown; anything else can be typed in with "Other…"
+export const COMMON_UNITS = ['each', 'case', 'pack', 'jug', 'gallon', 'pound']
 
 export const STORAGE_SUGGESTIONS = ['Laundry Room', 'Kitchen', 'Office', 'Breakfast Room', 'Basement', 'Garage', 'Main Floor North Hallway', 'Main Floor South Hallway', '2nd Floor North Hallway', '2nd Floor South Hallway']
 
@@ -64,7 +65,7 @@ export function fmtQty(n: number | null | undefined) {
 
 export function plural(unit: string, n: number) {
   if (Number(n) === 1) return unit
-  if (['each', 'lb', 'dozen', 'set'].includes(unit)) return unit === 'lb' ? 'lb' : unit
+  if (['each', 'lb', 'lbs', 'dozen', 'set'].includes(unit)) return unit
   if (/(s|x|ch|sh)$/.test(unit)) return `${unit}es`
   if (unit === 'loaf') return 'loaves'
   return `${unit}s`

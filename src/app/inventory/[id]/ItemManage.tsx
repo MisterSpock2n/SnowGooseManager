@@ -8,7 +8,7 @@ import type { InventoryItem } from '@/lib/inventory'
 
 const btn = (fg: string) => ({ padding: '10px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: fg, fontWeight: 700, cursor: 'pointer' }) as const
 
-export default function ItemManage({ item, canDelete, hasHistory }: { item: InventoryItem; canDelete: boolean; hasHistory: boolean }) {
+export default function ItemManage({ item, canDelete, hasHistory, unitsInUse }: { item: InventoryItem; canDelete: boolean; hasHistory: boolean; unitsInUse: string[] }) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -34,7 +34,7 @@ export default function ItemManage({ item, canDelete, hasHistory }: { item: Inve
     router.refresh()
   }
 
-  if (editing) return <ItemForm item={item} onDone={() => setEditing(false)} />
+  if (editing) return <ItemForm item={item} onDone={() => setEditing(false)} unitsInUse={unitsInUse} />
 
   return (
     <div style={{ background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
