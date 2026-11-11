@@ -46,7 +46,7 @@ export default async function NewInvoicePage({ searchParams }: { searchParams: P
     <div style={{ maxWidth: 820, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Log an Invoice for Jon</h1>
       <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
-        Upload the bill so Jon can see it from anywhere. He&apos;ll get an email alert once alerts are turned on.
+        Upload the bill so Jon can see it from anywhere. Jon gets an email alert at info@snowgooseinn.com as soon as it&apos;s saved.
       </p>
       <MaintenanceNav active="invoices" />
       <NewInvoiceForm

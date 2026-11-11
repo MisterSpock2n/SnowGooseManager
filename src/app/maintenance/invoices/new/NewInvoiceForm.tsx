@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import InvoiceFilePicker from '@/components/maintenance/InvoiceFilePicker'
-import { todayLocal, uploadInvoiceFiles } from '@/lib/invoices'
+import { notifyJon, todayLocal, uploadInvoiceFiles } from '@/lib/invoices'
 import type { Assignee } from '@/lib/maintenance'
 
 export type MafOption = { id: string; label: string; assignedTo: string; closed: boolean }
@@ -100,7 +100,16 @@ export default function NewInvoiceForm({
 
     setMessage(`Uploading ${files.length} file${files.length === 1 ? '' : 's'}…`)
     const { errors } = await uploadInvoiceFiles(supabase, data.id, files)
-    router.push(errors.length ? `/maintenance/invoices/${data.id}?upload=failed` : `/maintenance/invoices/${data.id}?created=1`)
+    if (errors.length) {
+      // Hold the alert until the files are there; it can be sent from the invoice page
+      router.push(`/maintenance/invoices/${data.id}?upload=failed`)
+      router.refresh()
+      return
+    }
+
+    setMessage('Uploading done. Emailing Jon…')
+    const alert = await notifyJon(supabase, data.id)
+    router.push(`/maintenance/invoices/${data.id}?created=1&alert=${alert.ok ? 'sent' : 'failed'}`)
     router.refresh()
   }
 

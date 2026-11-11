@@ -5,6 +5,7 @@ import MaintenanceNav from '@/components/maintenance/MaintenanceNav'
 import InvoiceStatusBadge from '@/components/maintenance/InvoiceStatusBadge'
 import InvoiceActions from './InvoiceActions'
 import InvoiceFiles, { type InvoiceFileItem } from './InvoiceFiles'
+import NotifyJonButton from './NotifyJonButton'
 import { INVOICE_BUCKET, currency, formatDate, isPastDue, type InvoiceStatus } from '@/lib/invoices'
 import { formatDateTime, one } from '@/lib/maintenance'
 
@@ -29,6 +30,7 @@ export type InvoiceDetail = {
   status_changed_by_name: string | null
   notified_at: string | null
   notify_status: 'pending' | 'sent' | 'failed'
+  notify_error: string | null
   created_at: string
   related_action_id: string | null
   maintenance_actions: { id: string; maf_number: string; description: string } | { id: string; maf_number: string; description: string }[] | null
@@ -48,7 +50,7 @@ export default async function InvoiceDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ created?: string; upload?: string }>
+  searchParams: Promise<{ created?: string; upload?: string; alert?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
@@ -65,7 +67,7 @@ export default async function InvoiceDetailPage({
 
   const select = `id, vendor_name, vendor_phone, invoice_number, invoice_date, due_date, amount, status, notes,
     logged_by, logged_by_name, seen_at, seen_by_name, paid_at, paid_by_name, paid_note,
-    status_changed_at, status_changed_by_name, notified_at, notify_status, created_at, related_action_id,
+    status_changed_at, status_changed_by_name, notified_at, notify_status, notify_error, created_at, related_action_id,
     maintenance_actions(id, maf_number, description)`
 
   const [{ data, error }, { data: role }, { data: fileRows }] = await Promise.all([
@@ -112,7 +114,8 @@ export default async function InvoiceDetailPage({
 
       {sp.created ? (
         <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
-          Invoice saved for Jon.
+          Invoice saved for Jon.{' '}
+          {sp.alert === 'sent' ? 'An email alert was sent to info@snowgooseinn.com.' : sp.alert === 'failed' ? 'The email alert did not go through; see below to try again.' : ''}
         </div>
       ) : null}
       {sp.upload === 'failed' ? (
@@ -166,12 +169,15 @@ export default async function InvoiceDetailPage({
         ) : null}
         <Row label="Email alert to Jon">
           {inv.notify_status === 'sent' ? (
-            <span>Notified Jon on {formatDateTime(inv.notified_at)}</span>
+            <span style={{ color: '#166534' }}>Notified Jon on {formatDateTime(inv.notified_at)}</span>
           ) : inv.notify_status === 'failed' ? (
-            <span style={{ color: '#991b1b' }}>Alert failed to send</span>
+            <span style={{ color: '#991b1b' }}>
+              Alert failed to send{inv.notify_error ? <span style={{ color: '#6b7280', fontSize: 13 }}> — {inv.notify_error}</span> : null}
+            </span>
           ) : (
-            <span style={{ color: '#6b7280' }}>Not sent. Email alerts are coming in the next update (1.5.4).</span>
+            <span style={{ color: '#6b7280' }}>Not sent yet</span>
           )}
+          <NotifyJonButton invoiceId={inv.id} status={inv.notify_status} canManage={canManage} hasFiles={files.length > 0} />
         </Row>
       </div>
 
