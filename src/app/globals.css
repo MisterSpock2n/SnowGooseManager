@@ -52,11 +52,11 @@
   color-scheme: light;
 }
 
-[data-section="dashboard"] { --c: var(--dash); }
-[data-section="time"] { --c: var(--time); }
-[data-section="payroll"] { --c: var(--pay); }
-[data-section="maintenance"] { --c: var(--maint); }
-[data-section="inventory"] { --c: var(--inv); }
+[data-section="dashboard"] { --c: var(--dash); --accent: var(--dash); }
+[data-section="time"] { --c: var(--time); --accent: var(--time); }
+[data-section="payroll"] { --c: var(--pay); --accent: var(--pay); }
+[data-section="maintenance"] { --c: var(--maint); --accent: var(--maint); }
+[data-section="inventory"] { --c: var(--inv); --accent: var(--inv); }
 
 @theme inline {
   --color-background: var(--bg);
@@ -65,6 +65,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+@layer base {
+  /* Tailwind's border utilities default to the theme line color */
+  *, ::before, ::after { border-color: var(--line); }
+}
 
 html, body {
   margin: 0;

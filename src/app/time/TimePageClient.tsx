@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase-browser'
 
-type Property = {
+export type Property = {
   id: string
   name: string
 }
 
-type UserRow = {
+export type UserRow = {
   id: string
   full_name: string
 }
 
-type TimeEntry = {
+export type TimeEntry = {
   id: string
   entry_date: string
   entry_type: 'hourly' | 'overnight'
@@ -27,16 +27,34 @@ type TimeEntry = {
   users: { full_name: string | null } | { full_name: string | null }[] | null
 }
 
-export default function TimePage() {
-  const [properties, setProperties] = useState<Property[]>([])
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [entries, setEntries] = useState<TimeEntry[]>([])
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+function localToday() {
+  const d = new Date()
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().slice(0, 10)
+}
 
-  const [propertyId, setPropertyId] = useState('')
-  const [userId, setUserId] = useState('')
-  const [entryDate, setEntryDate] = useState(new Date().toISOString().slice(0, 10))
+// Lists are loaded on the server (see page.tsx) so the form never comes up empty
+// while the browser is still picking up the sign-in.
+export default function TimePage({
+  initialProperties,
+  initialUsers,
+  initialEntries,
+  loadError,
+}: {
+  initialProperties: Property[]
+  initialUsers: UserRow[]
+  initialEntries: TimeEntry[]
+  loadError: string
+}) {
+  const [properties, setProperties] = useState<Property[]>(initialProperties)
+  const [users, setUsers] = useState<UserRow[]>(initialUsers)
+  const [entries, setEntries] = useState<TimeEntry[]>(initialEntries)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState(loadError)
+
+  const [propertyId, setPropertyId] = useState(initialProperties[0]?.id ?? '')
+  const [userId, setUserId] = useState(initialUsers[0]?.id ?? '')
+  const [entryDate, setEntryDate] = useState(localToday)
   const [entryType, setEntryType] = useState<'hourly' | 'overnight'>('hourly')
   const [workType, setWorkType] = useState<'cleaning' | 'maintenance' | 'it' | 'general'>('cleaning')
   const [hoursWorked, setHoursWorked] = useState('1')
@@ -146,11 +164,12 @@ export default function TimePage() {
 }
 
   useEffect(() => {
-    async function init() {
-      await loadReferenceData()
-      await loadEntries()
+    // If the server lists came back empty, try once more from the browser
+    if (initialProperties.length === 0 || initialUsers.length === 0) {
+      loadReferenceData()
+      loadEntries()
     }
-    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
