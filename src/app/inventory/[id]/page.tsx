@@ -17,6 +17,8 @@ type Txn = {
   note: string | null
   created_by_name: string | null
   created_at: string
+  related_action_id: string | null
+  maintenance_actions: { maf_number: string } | { maf_number: string }[] | null
 }
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -46,7 +48,7 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
       .maybeSingle(),
     supabase
       .from('inventory_transactions')
-      .select('id, kind, quantity, quantity_delta, quantity_after, note, created_by_name, created_at')
+      .select('id, kind, quantity, quantity_delta, quantity_after, note, created_by_name, created_at, related_action_id, maintenance_actions(maf_number)')
       .eq('item_id', id)
       .order('created_at', { ascending: false })
       .limit(100),
@@ -116,6 +118,14 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
                 ) : null}
                 <span style={{ color: '#6b7280' }}> → {fmtQty(t.quantity_after)} on hand</span>
                 {t.note ? <span style={{ color: '#374151' }}> · {t.note}</span> : null}
+                {t.related_action_id ? (
+                  <>
+                    {' · '}
+                    <Link href={`/maintenance/${t.related_action_id}`}>
+                      {(Array.isArray(t.maintenance_actions) ? t.maintenance_actions[0]?.maf_number : t.maintenance_actions?.maf_number) ?? 'MAF'}
+                    </Link>
+                  </>
+                ) : null}
                 {t.created_by_name ? <span style={{ color: '#6b7280' }}> · by {t.created_by_name}</span> : null}
               </span>
               <span style={{ color: '#6b7280' }}>{formatDateTime(t.created_at)}</span>

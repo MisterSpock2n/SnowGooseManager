@@ -6,7 +6,7 @@ const tabs: { key: Tab; label: string; href: string | null }[] = [
   { key: 'stock', label: 'Stock', href: '/inventory' },
   { key: 'new', label: 'Add item', href: '/inventory/new' },
   { key: 'shopping', label: 'Shopping list', href: '/inventory/shopping' },
-  { key: 'count', label: 'Count sheet', href: null },
+  { key: 'count', label: 'Count sheet', href: '/inventory/count' },
 ]
 
 export default function InventoryNav({ active }: { active?: Tab }) {
