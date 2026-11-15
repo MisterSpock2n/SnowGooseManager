@@ -5,6 +5,7 @@ import MaintenanceNav from '@/components/maintenance/MaintenanceNav'
 import PriorityBadge from '@/components/maintenance/PriorityBadge'
 import MafActions from './MafActions'
 import MafPhotos, { type PhotoItem } from './MafPhotos'
+import MafParts, { type PartItem, type PartTxn } from './MafParts'
 import { PHOTO_BUCKET } from '@/lib/photos'
 import InvoiceStatusBadge from '@/components/maintenance/InvoiceStatusBadge'
 import { currency, formatDate } from '@/lib/invoices'
@@ -86,7 +87,7 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
   const email = String(claimsData.claims.email ?? '')
   const currentUserId = String(claimsData.claims.sub ?? '')
 
-  const [{ data, error }, { data: events }, { data: assignees }, { data: role }, { data: photoRows }, { data: invoiceRows }] = await Promise.all([
+  const [{ data, error }, { data: events }, { data: assignees }, { data: role }, { data: photoRows }, { data: invoiceRows }, { data: partItems }, { data: partTxns }] = await Promise.all([
     supabase
       .from('maintenance_actions')
       .select(
@@ -115,6 +116,16 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       .select('id, vendor_name, amount, invoice_date, status')
       .eq('related_action_id', id)
       .order('invoice_date', { ascending: false }),
+    supabase
+      .from('inventory_items')
+      .select('id, name, category, unit, quantity_on_hand, reorder_level, last_counted_at')
+      .eq('active', true)
+      .order('name'),
+    supabase
+      .from('inventory_transactions')
+      .select('id, item_id, kind, quantity, note, created_by_name, created_at, inventory_items(name, unit)')
+      .eq('related_action_id', id)
+      .order('created_at', { ascending: true }),
   ])
 
   if (error) {
@@ -216,6 +227,16 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
           canManage={Boolean(role?.can_close_maf)}
           currentUserId={currentUserId}
           defaultKind={isClosed || maf.status === 'awaiting_verification' ? 'after' : 'before'}
+        />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <MafParts
+          actionId={maf.id}
+          mafNumber={maf.maf_number}
+          items={(partItems as PartItem[] | null) ?? []}
+          txns={(partTxns as PartTxn[] | null) ?? []}
+          canLog={maf.status !== 'cancelled'}
         />
       </div>
 
