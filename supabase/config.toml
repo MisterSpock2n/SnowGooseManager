@@ -1,4 +1,4 @@
-[functions.send-payroll-invoice]
+[functions.email-payroll-invoice]
 verify_jwt = false
 [functions.notify-owner-invoice]
 verify_jwt = false

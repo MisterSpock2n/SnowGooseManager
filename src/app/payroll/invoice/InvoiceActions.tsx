@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-browser'
 
 type InvoiceActionsProps = {
   userId: string
@@ -16,6 +15,7 @@ export default function InvoiceActions({
 }: InvoiceActionsProps) {
   const [sending, setSending] = useState(false)
   const [message, setMessage] = useState('')
+  const [ok, setOk] = useState(true)
 
   const downloadUrl =
     `/api/payroll/invoice-pdf?user=${encodeURIComponent(userId)}` +
@@ -23,72 +23,55 @@ export default function InvoiceActions({
     `&end=${encodeURIComponent(endDate)}`
 
   async function handleEmailPdf() {
-    const confirmed = window.confirm(
-      'Email this payroll invoice to info@snowgooseinn.com?'
-    )
-
+    const confirmed = window.confirm('Email this payroll invoice to info@snowgooseinn.com?')
     if (!confirmed) return
 
     setSending(true)
     setMessage('')
+    setOk(true)
 
-    const supabase = createClient()
-
-    const { data, error } = await supabase.functions.invoke(
-      'send-payroll-invoice',
-      {
-        body: {
-          userId,
-          startDate,
-          endDate,
-        },
+    try {
+      const res = await fetch('/api/payroll/invoice-pdf/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, startDate, endDate }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data?.success) {
+        setOk(false)
+        setMessage(`Not sent: ${data?.error ?? `the server returned ${res.status}`}. You can still use Download PDF and email it yourself.`)
+      } else {
+        setMessage(`Invoice emailed to ${data.sentTo ?? 'info@snowgooseinn.com'}.`)
       }
-    )
-
-    if (error) {
-      setMessage(`Could not send invoice: ${error.message}`)
-      setSending(false)
-      return
+    } catch {
+      setOk(false)
+      setMessage('Not sent: could not reach the server. Check the connection and try again.')
     }
-
-    if (!data?.success) {
-      setMessage(data?.error ?? 'Could not send invoice.')
-      setSending(false)
-      return
-    }
-
-    setMessage('Invoice emailed to info@snowgooseinn.com.')
     setSending(false)
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <button
-        type="button"
-        onClick={() => window.print()}
-        className="inline-flex rounded-md border px-4 py-2 text-sm"
-      >
-        Print / Save as PDF
-      </button>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-4">
+        <a
+          href={downloadUrl}
+          className="inline-flex items-center rounded-md bg-black px-5 py-2.5 text-sm font-medium text-white"
+        >
+          Download PDF
+        </a>
 
-      <a
-        href={downloadUrl}
-        className="inline-flex rounded-md bg-black px-4 py-2 text-sm text-white"
-      >
-        Download PDF
-      </a>
-
-      <button
-        type="button"
-        onClick={handleEmailPdf}
-        disabled={sending}
-        className="inline-flex rounded-md border border-blue-700 px-4 py-2 text-sm text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {sending ? 'Sending…' : 'Email PDF'}
-      </button>
+        <button
+          type="button"
+          onClick={handleEmailPdf}
+          disabled={sending}
+          className="inline-flex items-center rounded-md border border-blue-700 px-5 py-2.5 text-sm font-medium text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {sending ? 'Sending…' : 'Email PDF'}
+        </button>
+      </div>
 
       {message ? (
-        <p className="w-full text-sm text-gray-600">{message}</p>
+        <p className={`text-sm ${ok ? 'text-green-700' : 'text-red-700'}`}>{message}</p>
       ) : null}
     </div>
   )

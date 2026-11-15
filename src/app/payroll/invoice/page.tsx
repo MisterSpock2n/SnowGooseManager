@@ -155,26 +155,21 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
   return (
     <main className="invoice-page min-h-screen bg-gray-50 p-6">
       <div className="mx-auto max-w-4xl space-y-6">
-        <div className="invoice-toolbar flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div className="flex gap-3">
-                <Link
-                    href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
-                            className="inline-flex rounded-md border px-4 py-2 text-sm"
-                >
-                Back to Payroll
-                </Link>
+        <div className="invoice-toolbar flex flex-col gap-6">
+          <div className="flex flex-wrap items-start gap-4">
+            <Link
+              href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
+              className="inline-flex items-center rounded-md border bg-white px-5 py-2.5 text-sm font-medium"
+            >
+              ← Back to Payroll
+            </Link>
 
-                <InvoiceActions
-  userId={userId}
-  startDate={startDate}
-  endDate={endDate}
-/>
-</div>
+            <InvoiceActions userId={userId} startDate={startDate} endDate={endDate} />
+          </div>
+
           <div>
             <h1 className="text-2xl font-semibold">Invoice Preview</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Payroll invoice for {employeeName}
-            </p>
+            <p className="mt-1 text-sm text-gray-600">Payroll invoice for {employeeName}</p>
           </div>
         </div>
 
