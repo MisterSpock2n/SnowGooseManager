@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-browser'
 
 type InvoiceActionsProps = {
   userId: string
@@ -16,6 +15,7 @@ export default function InvoiceActions({
 }: InvoiceActionsProps) {
   const [sending, setSending] = useState(false)
   const [message, setMessage] = useState('')
+  const [ok, setOk] = useState(true)
 
   const downloadUrl =
     `/api/payroll/invoice-pdf?user=${encodeURIComponent(userId)}` +
@@ -23,41 +23,30 @@ export default function InvoiceActions({
     `&end=${encodeURIComponent(endDate)}`
 
   async function handleEmailPdf() {
-    const confirmed = window.confirm(
-      'Email this payroll invoice to info@snowgooseinn.com?'
-    )
-
+    const confirmed = window.confirm('Email this payroll invoice to info@snowgooseinn.com?')
     if (!confirmed) return
 
     setSending(true)
     setMessage('')
+    setOk(true)
 
-    const supabase = createClient()
-
-    const { data, error } = await supabase.functions.invoke(
-      'send-payroll-invoice',
-      {
-        body: {
-          userId,
-          startDate,
-          endDate,
-        },
+    try {
+      const res = await fetch('/api/payroll/invoice-pdf/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, startDate, endDate }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data?.success) {
+        setOk(false)
+        setMessage(`Not sent: ${data?.error ?? `the server returned ${res.status}`}. You can still use Download PDF and email it yourself.`)
+      } else {
+        setMessage(`Invoice emailed to ${data.sentTo ?? 'info@snowgooseinn.com'}.`)
       }
-    )
-
-    if (error) {
-      setMessage(`Could not send invoice: ${error.message}`)
-      setSending(false)
-      return
+    } catch {
+      setOk(false)
+      setMessage('Not sent: could not reach the server. Check the connection and try again.')
     }
-
-    if (!data?.success) {
-      setMessage(data?.error ?? 'Could not send invoice.')
-      setSending(false)
-      return
-    }
-
-    setMessage('Invoice emailed to info@snowgooseinn.com.')
     setSending(false)
   }
 
@@ -88,7 +77,7 @@ export default function InvoiceActions({
       </button>
 
       {message ? (
-        <p className="w-full text-sm text-gray-600">{message}</p>
+        <p className={`w-full text-sm ${ok ? 'text-green-700' : 'text-red-700'}`}>{message}</p>
       ) : null}
     </div>
   )
