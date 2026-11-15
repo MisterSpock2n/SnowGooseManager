@@ -44,6 +44,11 @@ export default function TimePage() {
   const [overnightBasePay, setOvernightBasePay] = useState('250')
   const [roomRevenue, setRoomRevenue] = useState('0')
   const [overnightCommissionRate, setOvernightCommissionRate] = useState('0.10')
+  const [revenueLookup, setRevenueLookup] = useState<{ loading: boolean; message: string; error: boolean }>({
+    loading: false,
+    message: '',
+    error: false,
+  })
   const [notes, setNotes] = useState('')
 
   const calculatedPay = useMemo(() => {
@@ -60,6 +65,27 @@ export default function TimePage() {
   }, [entryType, hoursWorked, rateApplied, overnightBasePay, roomRevenue, overnightCommissionRate])
 
   const supabase = createClient()
+
+  async function fetchRoomRevenue() {
+    setRevenueLookup({ loading: true, message: '', error: false })
+    try {
+      const res = await fetch(`/api/thinkreservations/room-revenue?date=${encodeURIComponent(entryDate)}`)
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setRevenueLookup({ loading: false, message: body.error ?? 'Could not get room revenue.', error: true })
+        return
+      }
+      setRoomRevenue(String(body.revenue))
+      const count = body.reservations === 1 ? '1 reservation' : `${body.reservations} reservations`
+      setRevenueLookup({
+        loading: false,
+        message: `From ThinkReservations for ${entryDate}: ${count}, before taxes. You can still edit the amount.`,
+        error: false,
+      })
+    } catch {
+      setRevenueLookup({ loading: false, message: 'Could not reach ThinkReservations. Enter the amount by hand.', error: true })
+    }
+  }
 
   async function loadReferenceData() {
     const [{ data: propertyData, error: propertyError }, { data: userData, error: userError }] =
@@ -337,14 +363,25 @@ if (entryType === 'hourly') {
 
             <div style={{ display: 'grid', gap: '8px' }}>
               <label>Room revenue</label>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={roomRevenue}
-                onChange={(e) => setRoomRevenue(e.target.value)}
-                required
-              />
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={roomRevenue}
+                  onChange={(e) => setRoomRevenue(e.target.value)}
+                  required
+                  style={{ flex: '1 1 140px' }}
+                />
+                <button type="button" onClick={fetchRoomRevenue} disabled={revenueLookup.loading || !entryDate}>
+                  {revenueLookup.loading ? 'Getting revenue...' : 'Get from ThinkReservations'}
+                </button>
+              </div>
+              {revenueLookup.message ? (
+                <p style={{ margin: 0, fontSize: '0.875rem', color: revenueLookup.error ? '#b91c1c' : '#4b5563' }}>
+                  {revenueLookup.message}
+                </p>
+              ) : null}
             </div>
 
             <div style={{ display: 'grid', gap: '8px' }}>
