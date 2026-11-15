@@ -41,16 +41,16 @@ export default function ForgotPasswordPage() {
     <AuthCard title="Forgot password" intro="Enter the email you sign in with and we'll send you a link to set a new password.">
       {sent ? (
         <div style={{ display: 'grid', gap: 14 }}>
-          <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', padding: '12px 14px', borderRadius: 8 }}>
+          <div style={{ background: 'var(--ok-bg)', border: '1px solid var(--ok-line)', color: 'var(--ok)', padding: '12px 14px', borderRadius: 8 }}>
             If <strong>{email.trim()}</strong> has an account, a reset link is on its way. Check your inbox (and spam folder). The link works once and expires in about an hour.
           </div>
-          <p style={{ margin: 0, fontSize: 14, color: '#6b7280' }}>Open the link on this device for the smoothest reset.</p>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--muted)' }}>Open the link on this device for the smoothest reset.</p>
           <Link href="/login" style={{ fontSize: 14 }}>← Back to sign in</Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '16px' }}>
           {expired ? (
-            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', color: '#9a3412', padding: '10px 12px', borderRadius: 8, fontSize: 14 }}>
+            <div style={{ background: 'var(--warn-bg)', border: '1px solid var(--warn-line)', color: 'var(--warn)', padding: '10px 12px', borderRadius: 8, fontSize: 14 }}>
               That reset link expired or was already used. Send yourself a new one.
             </div>
           ) : null}
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
           <button type="submit" disabled={loading} style={authButton}>
             {loading ? 'Sending…' : 'Send reset link'}
           </button>
-          {error ? <p style={{ color: '#b91c1c', margin: 0 }}>{error}</p> : null}
+          {error ? <p style={{ color: 'var(--bad)', margin: 0 }}>{error}</p> : null}
           <Link href="/login" style={{ fontSize: 14 }}>← Back to sign in</Link>
         </form>
       )}

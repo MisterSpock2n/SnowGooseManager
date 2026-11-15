@@ -263,7 +263,7 @@ if (entryType === 'hourly') {
   return (
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>Time Entry</h1>
-      <p style={{ marginBottom: '24px', color: '#666' }}>
+      <p style={{ marginBottom: '24px', color: 'var(--muted)' }}>
         Log hourly work and overnight pay entries for Snow Goose payroll.
       </p>
 
@@ -378,7 +378,7 @@ if (entryType === 'hourly') {
                 </button>
               </div>
               {revenueLookup.message ? (
-                <p style={{ margin: 0, fontSize: '0.875rem', color: revenueLookup.error ? '#b91c1c' : '#4b5563' }}>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: revenueLookup.error ? 'var(--bad)' : 'var(--muted)' }}>
                   {revenueLookup.message}
                 </p>
               ) : null}
@@ -406,7 +406,7 @@ if (entryType === 'hourly') {
         <div
           style={{
             padding: '12px 16px',
-            background: '#f4f4f5',
+            background: 'var(--panel-2)',
             borderRadius: '8px',
             fontWeight: 600,
           }}
@@ -420,8 +420,8 @@ if (entryType === 'hourly') {
           style={{
             padding: '12px 16px',
             borderRadius: '8px',
-            background: '#111827',
-            color: 'white',
+            background: 'var(--accent)',
+            color: 'var(--on-accent)',
             border: 'none',
           }}
         >
@@ -438,10 +438,10 @@ if (entryType === 'hourly') {
             <div
               key={entry.id}
               style={{
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--line)',
                 borderRadius: '10px',
                 padding: '16px 20  px',
-                background: entry.entry_type === 'overnight' ? '#fff7ed' : '#f8fafc',
+                background: entry.entry_type === 'overnight' ? 'var(--warn-bg)' : 'var(--panel-2)',
                 lineHeight: '1.5'
               }}
             >
@@ -480,9 +480,9 @@ if (entryType === 'hourly') {
       style={{
         padding: '6px 10px',
         borderRadius: '8px',
-        border: '1px solid #dc2626',
-        background: 'white',
-        color: '#dc2626',
+        border: '1px solid var(--bad)',
+        background: 'var(--panel)',
+        color: 'var(--bad)',
         cursor: loading ? 'not-allowed' : 'pointer',
       }}
     >

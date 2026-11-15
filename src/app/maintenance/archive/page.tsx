@@ -34,7 +34,7 @@ type ArchivedMaf = {
 }
 
 const RESULT_LIMIT = 200
-const selectStyle = { padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white' } as const
+const selectStyle = { padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)' } as const
 
 // Words to match; quotes and PostgREST control characters are removed
 function searchTerms(q: string) {
@@ -124,13 +124,13 @@ export default async function MaintenanceArchivePage({ searchParams }: { searchP
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Maintenance Archive</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Closed MAFs. Search descriptions and completion notes for part numbers, vendors, or past fixes.
       </p>
 
       <MaintenanceNav active="archive" />
 
-      <form method="get" style={{ display: 'grid', gap: 10, background: 'white', padding: 14, borderRadius: 10, marginBottom: 16 }}>
+      <form method="get" style={{ display: 'grid', gap: 10, background: 'var(--panel)', padding: 14, borderRadius: 10, marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 10 }}>
           <input
             type="search"
@@ -138,9 +138,9 @@ export default async function MaintenanceArchivePage({ searchParams }: { searchP
             defaultValue={params.q ?? ''}
             placeholder="Search e.g. water heater, part number, Gered…"
             aria-label="Search archive"
-            style={{ flex: 1, padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15 }}
+            style={{ flex: 1, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15 }}
           />
-          <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, cursor: 'pointer' }}>
             Search
           </button>
         </div>
@@ -187,18 +187,18 @@ export default async function MaintenanceArchivePage({ searchParams }: { searchP
       </form>
 
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           Could not load the archive: {error.message}
         </div>
       ) : null}
 
-      <div style={{ fontSize: 14, color: '#6b7280', marginBottom: 10 }}>
+      <div style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 10 }}>
         {count ?? mafs.length} closed MAF{(count ?? mafs.length) === 1 ? '' : 's'}
         {count && count > RESULT_LIMIT ? ` — showing the ${RESULT_LIMIT} most recent; narrow your search to see older ones` : ''}
       </div>
 
       {mafs.length === 0 && !error ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>
           {hasFilters ? 'No closed MAFs match this search.' : 'No closed MAFs yet. Completed and cancelled MAFs will show up here.'}
         </div>
       ) : null}
@@ -214,14 +214,14 @@ export default async function MaintenanceArchivePage({ searchParams }: { searchP
             <Link
               key={maf.id}
               href={`/maintenance/${maf.id}`}
-              style={{ display: 'grid', gap: 6, background: 'white', borderRadius: 12, padding: '14px 16px', borderLeft: `8px solid ${maf.status === 'cancelled' ? '#9ca3af' : p.color}`, textDecoration: 'none', color: 'inherit' }}
+              style={{ display: 'grid', gap: 6, background: 'var(--panel)', borderRadius: 12, padding: '14px 16px', borderLeft: `8px solid ${maf.status === 'cancelled' ? '#9ca3af' : p.color}`, textDecoration: 'none', color: 'inherit' }}
             >
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                 <PriorityBadge priority={maf.priority} />
                 <strong>
                   <Highlight text={maf.maf_number} terms={terms} />
                 </strong>
-                <span style={{ color: '#374151' }}>
+                <span style={{ color: 'var(--text)' }}>
                   {loc}
                   {maf.location_detail ? <> — <Highlight text={maf.location_detail} terms={terms} /></> : null}
                 </span>
@@ -231,24 +231,24 @@ export default async function MaintenanceArchivePage({ searchParams }: { searchP
                     fontWeight: 700,
                     padding: '2px 8px',
                     borderRadius: 999,
-                    background: maf.status === 'completed' ? '#dcfce7' : '#f3f4f6',
-                    color: maf.status === 'completed' ? '#166534' : '#4b5563',
+                    background: maf.status === 'completed' ? 'var(--ok-bg)' : 'var(--panel-2)',
+                    color: maf.status === 'completed' ? 'var(--ok)' : 'var(--muted)',
                   }}
                 >
                   {STATUS_LABELS[maf.status]}
                 </span>
-                {photoCount ? <span style={{ fontSize: 12, color: '#6b7280' }}>{photoCount} photo{photoCount === 1 ? '' : 's'}</span> : null}
+                {photoCount ? <span style={{ fontSize: 12, color: 'var(--muted)' }}>{photoCount} photo{photoCount === 1 ? '' : 's'}</span> : null}
               </div>
-              <div style={{ color: '#1f2937' }}>
+              <div style={{ color: 'var(--text)' }}>
                 <Highlight text={snippet(maf.description, terms)} terms={terms} />
               </div>
               {notes ? (
-                <div style={{ fontSize: 14, color: '#374151', background: '#f8fafc', borderRadius: 8, padding: '6px 10px' }}>
+                <div style={{ fontSize: 14, color: 'var(--text)', background: 'var(--panel-2)', borderRadius: 8, padding: '6px 10px' }}>
                   <span style={{ fontWeight: 600 }}>Notes: </span>
                   <Highlight text={notes} terms={terms} />
                 </div>
               ) : null}
-              <div style={{ fontSize: 13, color: '#6b7280' }}>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
                 Assigned to {assignee} · {maf.status === 'cancelled' ? 'Cancelled' : 'Completed'} by {maf.completed_by_name ?? '—'} on {formatDateTime(maf.completed_at)}
                 {maf.verified_by_name ? ` · Verified by ${maf.verified_by_name}` : ''}
                 {maf.cost !== null ? ` · ${currency.format(maf.cost)}` : ''}

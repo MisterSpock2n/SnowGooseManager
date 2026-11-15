@@ -1,27 +1,33 @@
-import React from 'react';
-import LogoutButton from '@/components/LogoutButton'
+import React from 'react'
+import type { Metadata, Viewport } from 'next'
+import { Antonio } from 'next/font/google'
+import AppShell from '@/components/AppShell'
 import { version } from '../../package.json'
+import './globals.css'
+
+const antonio = Antonio({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-antonio', display: 'swap' })
+
+export const metadata: Metadata = {
+  title: 'Snow Goose Ops',
+  description: 'Snow Goose Inn operations: time, payroll, maintenance and inventory',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#efece4',
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body style={{ fontFamily: 'Arial, sans-serif', margin: 0, background: '#f5f7fb', color: '#1f2937' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: '100vh' }}>
-          <aside style={{ background: '#0f172a', color: 'white', padding: 24 }}>
-            <h1 style={{ fontSize: 20, marginTop: 0 }}>Snow Goose Ops</h1>
-            <nav style={{ display: 'grid', gap: 12 }}>
-              <LogoutButton />
-              <a href="/dashboard" style={{ color: 'white' }}>Dashboard</a>
-              <a href="/time" style={{ color: 'white' }}>Time</a>
-              <a href="/payroll" style={{ color: 'white' }}>Payroll</a>
-              <a href="/inventory" style={{ color: 'white' }}>Inventory</a>
-              <a href="/maintenance" style={{ color: 'white' }}>Maintenance</a>
-            </nav>
-            <div style={{ marginTop: 24, fontSize: 12, color: '#94a3b8' }}>v{version}</div>
-          </aside>
-          <main style={{ padding: 24 }}>{children}</main>
-        </div>
+    <html lang="en" data-theme="day" className={antonio.variable}>
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="" />
+        <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet" />
+      </head>
+      <body>
+        <AppShell version={version}>{children}</AppShell>
       </body>
     </html>
-  );
+  )
 }

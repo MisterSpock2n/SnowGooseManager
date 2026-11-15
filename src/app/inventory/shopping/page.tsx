@@ -46,7 +46,7 @@ export default async function ShoppingListPage() {
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Shopping List</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Everything at or below its low-stock level. Tick items off as you shop, then log them as received when they&apos;re put away.
       </p>
       <div className="no-print">
@@ -54,7 +54,7 @@ export default async function ShoppingListPage() {
       </div>
 
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           Could not load inventory: {error.message}
         </div>
       ) : null}
@@ -68,7 +68,7 @@ export default async function ShoppingListPage() {
         }
       />
 
-      <p className="no-print" style={{ fontSize: 13, color: '#6b7280', marginTop: 16 }}>
+      <p className="no-print" style={{ fontSize: 13, color: 'var(--muted)', marginTop: 16 }}>
         Not seeing something? Items only show here after their first count, and only if they have a low-stock level. Set these on the item&apos;s page from the{' '}
         <Link href="/inventory">Stock</Link> list.
       </p>

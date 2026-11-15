@@ -15,7 +15,7 @@ function nowForInput() {
 }
 
 const fieldStyle = { display: 'grid', gap: 6 } as const
-const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15, background: 'white' } as const
+const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
 
 export default function NewMafForm({
@@ -107,11 +107,11 @@ export default function NewMafForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 18, background: 'white', borderRadius: 12, padding: 24 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 18, background: 'var(--panel)', borderRadius: 12, padding: 24 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div style={fieldStyle}>
           <span style={labelStyle}>Initiated by</span>
-          <div style={{ ...inputStyle, background: '#f3f4f6', color: '#374151' }}>{initiatedByName}</div>
+          <div style={{ ...inputStyle, background: 'var(--panel-2)', color: 'var(--text)' }}>{initiatedByName}</div>
         </div>
         <div style={fieldStyle}>
           <label htmlFor="discovered" style={labelStyle}>Date / time discovered</label>
@@ -138,7 +138,7 @@ export default function NewMafForm({
         </div>
         <div style={fieldStyle}>
           <label htmlFor="locationDetail" style={labelStyle}>
-            Location detail {selectedLocation?.name === 'Other' ? '' : <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>}
+            Location detail {selectedLocation?.name === 'Other' ? '' : <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>}
           </label>
           <input
             id="locationDetail"
@@ -171,7 +171,7 @@ export default function NewMafForm({
             </optgroup>
           </select>
           {selectedAssignee && selectedAssignee.kind !== 'staff' ? (
-            <span style={{ fontSize: 13, color: '#6b7280' }}>
+            <span style={{ fontSize: 13, color: 'var(--muted)' }}>
               {selectedAssignee.phone ? `Phone: ${selectedAssignee.phone}. ` : ''}
               Outside-vendor work needs a verified-by sign-off from Nick, Rhiannon, or Jon before it can be closed.
             </span>
@@ -203,12 +203,12 @@ export default function NewMafForm({
 
       <div style={{ display: 'grid', gap: 6 }}>
         <span style={labelStyle}>
-          Photos <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+          Photos <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>
         </span>
         <PhotoPicker files={photos} onChange={setPhotos} />
       </div>
 
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 16, color: '#6b7280', fontSize: 14 }}>
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 16, color: 'var(--muted)', fontSize: 14 }}>
         Completion notes (part numbers, steps taken, vendor details) are added by whoever closes the MAF, from its detail page.
       </div>
 
@@ -216,8 +216,8 @@ export default function NewMafForm({
         <div
           style={
             message.startsWith('Uploading')
-              ? { background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e3a8a', padding: '10px 14px', borderRadius: 8 }
-              : { background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }
+              ? { background: 'var(--info-bg)', border: '1px solid var(--info-line)', color: 'var(--info)', padding: '10px 14px', borderRadius: 8 }
+              : { background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '10px 14px', borderRadius: 8 }
           }
         >
           {message}
@@ -228,7 +228,7 @@ export default function NewMafForm({
         <button
           type="submit"
           disabled={saving}
-          style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}
+          style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}
         >
           {saving ? 'Creating…' : 'Create MAF'}
         </button>

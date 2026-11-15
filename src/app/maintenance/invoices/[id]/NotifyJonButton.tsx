@@ -44,11 +44,11 @@ export default function NotifyJonButton({
         type="button"
         onClick={send}
         disabled={busy}
-        style={{ width: 'fit-content', padding: '7px 14px', borderRadius: 8, border: '1px solid #d1d5db', background: status === 'sent' ? 'white' : '#0f172a', color: status === 'sent' ? '#0f172a' : 'white', fontWeight: 700, fontSize: 14, cursor: busy ? 'wait' : 'pointer' }}
+        style={{ width: 'fit-content', padding: '7px 14px', borderRadius: 8, border: '1px solid var(--line)', background: status === 'sent' ? 'var(--panel)' : 'var(--accent)', color: status === 'sent' ? 'var(--text)' : 'var(--on-accent)', fontWeight: 700, fontSize: 14, cursor: busy ? 'wait' : 'pointer' }}
       >
         {busy ? 'Sending…' : label}
       </button>
-      {message ? <span style={{ fontSize: 13, color: ok ? '#166534' : '#991b1b' }}>{message}</span> : null}
+      {message ? <span style={{ fontSize: 13, color: ok ? 'var(--ok)' : 'var(--bad)' }}>{message}</span> : null}
     </div>
   )
 }

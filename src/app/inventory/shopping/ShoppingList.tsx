@@ -102,16 +102,16 @@ export default function ShoppingList({ items, canSendEmail, emailInfo }: { items
     setMessage(data?.sent ? 'Low-stock email sent.' : data?.reason ?? 'Nothing to send.')
   }
 
-  const btn = { padding: '8px 14px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#0f172a', fontWeight: 700, fontSize: 14, cursor: 'pointer' } as const
+  const btn = { padding: '8px 14px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)', color: 'var(--text)', fontWeight: 700, fontSize: 14, cursor: 'pointer' } as const
   const outCount = items.filter((i) => i.out).length
 
   return (
     <div style={{ display: 'grid', gap: 14 }}>
       <style>{`@media print { .no-print { display: none !important; } aside { display: none !important; } main { padding: 0 !important; } }`}</style>
 
-      <div className="no-print" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', background: 'white', padding: 12, borderRadius: 10 }}>
+      <div className="no-print" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', background: 'var(--panel)', padding: 12, borderRadius: 10 }}>
         <span style={{ fontSize: 14, fontWeight: 600 }}>Group by</span>
-        <select value={groupBy} onChange={(e) => setGroupBy(e.target.value as 'store' | 'category')} aria-label="Group by" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white' }}>
+        <select value={groupBy} onChange={(e) => setGroupBy(e.target.value as 'store' | 'category')} aria-label="Group by" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)' }}>
           <option value="store">Where to buy</option>
           <option value="category">Category</option>
         </select>
@@ -119,39 +119,39 @@ export default function ShoppingList({ items, canSendEmail, emailInfo }: { items
         <button type="button" onClick={copyList} disabled={!items.length} style={btn}>Copy list</button>
         {checked.size ? <button type="button" onClick={clearChecks} style={btn}>Clear {checked.size} tick{checked.size === 1 ? '' : 's'}</button> : null}
         {canSendEmail ? (
-          <button type="button" onClick={sendEmail} disabled={sending || !items.length} style={{ ...btn, background: '#0f172a', color: 'white', border: 'none' }}>
+          <button type="button" onClick={sendEmail} disabled={sending || !items.length} style={{ ...btn, background: 'var(--accent)', color: 'var(--on-accent)', border: 'none' }}>
             {sending ? 'Sending…' : 'Email list now'}
           </button>
         ) : null}
-        {message ? <span style={{ fontSize: 13, color: '#374151' }}>{message}</span> : null}
+        {message ? <span style={{ fontSize: 13, color: 'var(--text)' }}>{message}</span> : null}
       </div>
-      <div className="no-print" style={{ fontSize: 13, color: '#6b7280' }}>{emailInfo}</div>
+      <div className="no-print" style={{ fontSize: 13, color: 'var(--muted)' }}>{emailInfo}</div>
 
       <div style={{ fontSize: 15 }}>
-        <strong>{items.length}</strong> item{items.length === 1 ? '' : 's'} to buy{outCount ? <> · <strong style={{ color: '#991b1b' }}>{outCount} out of stock</strong></> : null}
+        <strong>{items.length}</strong> item{items.length === 1 ? '' : 's'} to buy{outCount ? <> · <strong style={{ color: 'var(--bad)' }}>{outCount} out of stock</strong></> : null}
       </div>
 
       {items.length === 0 ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>Nothing is low right now.</div>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>Nothing is low right now.</div>
       ) : null}
 
       {groups.map((g) => (
-        <section key={g.key} style={{ background: 'white', borderRadius: 12, padding: '12px 18px', breakInside: 'avoid' }}>
+        <section key={g.key} style={{ background: 'var(--panel)', borderRadius: 12, padding: '12px 18px', breakInside: 'avoid' }}>
           <h2 style={{ fontSize: '1.1rem', margin: '4px 0 8px' }}>
-            {g.label} <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 14 }}>({g.items.length})</span>
+            {g.label} <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: 14 }}>({g.items.length})</span>
           </h2>
           {g.items.map((i) => {
             const done = checked.has(i.id)
             return (
-              <div key={i.id} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12, alignItems: 'center', padding: '8px 0', borderTop: '1px solid #f1f5f9' }}>
+              <div key={i.id} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12, alignItems: 'center', padding: '8px 0', borderTop: '1px solid var(--line)' }}>
                 <input type="checkbox" checked={done} onChange={() => toggle(i.id)} aria-label={`Got ${i.name}`} style={{ width: 20, height: 20 }} />
                 <div style={{ opacity: done ? 0.5 : 1, textDecoration: done ? 'line-through' : 'none' }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Link href={`/inventory/${i.id}`} style={{ fontWeight: 700, color: '#0f172a' }}>{i.name}</Link>
-                    <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 8px', borderRadius: 999, background: i.out ? '#fee2e2' : '#ffedd5', color: i.out ? '#991b1b' : '#9a3412' }}>{i.out ? 'Out' : 'Low'}</span>
+                    <Link href={`/inventory/${i.id}`} style={{ fontWeight: 700, color: 'var(--text)' }}>{i.name}</Link>
+                    <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 8px', borderRadius: 999, background: i.out ? 'var(--bad-bg)' : 'var(--warn-bg)', color: i.out ? 'var(--bad)' : 'var(--warn)' }}>{i.out ? 'Out' : 'Low'}</span>
                     {i.url ? <a className="no-print" href={i.url} target="_blank" rel="noreferrer" style={{ fontSize: 13 }}>Reorder link</a> : null}
                   </div>
-                  <div style={{ fontSize: 13, color: '#6b7280' }}>
+                  <div style={{ fontSize: 13, color: 'var(--muted)' }}>
                     {fmtQty(i.onHand)} {plural(i.unit, i.onHand)} left · low at {fmtQty(i.reorderLevel)}
                     {groupBy === 'store' ? ` · ${categoryInfo(i.category).label}` : i.vendor ? ` · ${i.vendor}` : ''}
                     {i.storage ? ` · ${i.storage}` : ''}

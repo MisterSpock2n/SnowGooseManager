@@ -20,11 +20,11 @@ export default function MaintenanceNav({ active }: { active?: Tab }) {
           fontSize: 14,
           fontWeight: 600,
           textDecoration: 'none',
-          border: '1px solid #d1d5db',
+          border: '1px solid var(--line)',
         } as const
         if (!tab.href) {
           return (
-            <span key={tab.key} title="Coming in a later build phase" style={{ ...base, color: '#9ca3af', background: '#f3f4f6', cursor: 'not-allowed' }}>
+            <span key={tab.key} title="Coming in a later build phase" style={{ ...base, color: 'var(--muted)', background: 'var(--panel-2)', cursor: 'not-allowed' }}>
               {tab.label} (soon)
             </span>
           )
@@ -35,9 +35,9 @@ export default function MaintenanceNav({ active }: { active?: Tab }) {
             href={tab.href}
             style={{
               ...base,
-              background: isActive ? '#0f172a' : 'white',
-              color: isActive ? 'white' : '#0f172a',
-              borderColor: isActive ? '#0f172a' : '#d1d5db',
+              background: isActive ? 'var(--accent)' : 'var(--panel)',
+              color: isActive ? 'var(--on-accent)' : 'var(--text)',
+              borderColor: isActive ? 'var(--accent)' : 'var(--line)',
             }}
           >
             {tab.label}

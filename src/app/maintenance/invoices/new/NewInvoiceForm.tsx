@@ -11,9 +11,9 @@ export type MafOption = { id: string; label: string; assignedTo: string; closed:
 
 const OTHER = '__other__'
 const fieldStyle = { display: 'grid', gap: 6 } as const
-const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15, background: 'white' } as const
+const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
-const optional = <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+const optional = <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>
 
 export default function NewInvoiceForm({
   vendors,
@@ -114,7 +114,7 @@ export default function NewInvoiceForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 18, background: 'white', borderRadius: 12, padding: 24 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 18, background: 'var(--panel)', borderRadius: 12, padding: 24 }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
         <div style={fieldStyle}>
           <label htmlFor="vendor" style={labelStyle}>From (person / company)</label>
@@ -139,7 +139,7 @@ export default function NewInvoiceForm({
         <div style={fieldStyle}>
           <label htmlFor="amount" style={labelStyle}>Amount</label>
           <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 12, top: 11, color: '#6b7280' }}>$</span>
+            <span style={{ position: 'absolute', left: 12, top: 11, color: 'var(--muted)' }}>$</span>
             <input id="amount" type="number" inputMode="decimal" min="0" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required style={{ ...inputStyle, paddingLeft: 24, width: '100%', boxSizing: 'border-box' }} />
           </div>
         </div>
@@ -184,14 +184,14 @@ export default function NewInvoiceForm({
         <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Anything Jon should know, e.g. what the work was, or if a check needs to go out by a certain day." style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }} />
       </div>
 
-      <div style={{ fontSize: 14, color: '#6b7280' }}>Logged by {loggedByName}</div>
+      <div style={{ fontSize: 14, color: 'var(--muted)' }}>Logged by {loggedByName}</div>
 
       {message ? (
         <div
           style={
             message.startsWith('Uploading')
-              ? { background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e3a8a', padding: '10px 14px', borderRadius: 8 }
-              : { background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }
+              ? { background: 'var(--info-bg)', border: '1px solid var(--info-line)', color: 'var(--info)', padding: '10px 14px', borderRadius: 8 }
+              : { background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '10px 14px', borderRadius: 8 }
           }
         >
           {message}
@@ -199,7 +199,7 @@ export default function NewInvoiceForm({
       ) : null}
 
       <div>
-        <button type="submit" disabled={saving} style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+        <button type="submit" disabled={saving} style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
           {saving ? 'Saving…' : 'Save invoice'}
         </button>
       </div>

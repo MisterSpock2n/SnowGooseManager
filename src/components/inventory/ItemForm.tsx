@@ -6,9 +6,9 @@ import { createClient } from '@/lib/supabase-browser'
 import { CATEGORIES, COMMON_UNITS, STORAGE_SUGGESTIONS, type InventoryCategory, type InventoryItem } from '@/lib/inventory'
 
 const fieldStyle = { display: 'grid', gap: 6 } as const
-const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15, background: 'white' } as const
+const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
-const optional = <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+const optional = <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>
 
 const OTHER_UNIT = '__other__'
 
@@ -83,7 +83,7 @@ export default function ItemForm({ item, onDone, unitsInUse = [] }: { item?: Inv
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16, background: 'white', borderRadius: 12, padding: 24 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16, background: 'var(--panel)', borderRadius: 12, padding: 24 }}>
       <datalist id="storageOptions">
         {STORAGE_SUGGESTIONS.map((s) => (
           <option key={s} value={s} />
@@ -156,14 +156,14 @@ export default function ItemForm({ item, onDone, unitsInUse = [] }: { item?: Inv
         <textarea id="itemNotes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Brand, size, part number…" style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }} />
       </div>
 
-      {message ? <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }}>{message}</div> : null}
+      {message ? <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '10px 14px', borderRadius: 8 }}>{message}</div> : null}
 
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" disabled={saving} style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+        <button type="submit" disabled={saving} style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, fontSize: 15, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
           {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add item'}
         </button>
         {isEdit ? (
-          <button type="button" onClick={onDone} style={{ padding: '12px 20px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#0f172a', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="button" onClick={onDone} style={{ padding: '12px 20px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)', color: 'var(--text)', fontWeight: 700, cursor: 'pointer' }}>
             Cancel
           </button>
         ) : null}

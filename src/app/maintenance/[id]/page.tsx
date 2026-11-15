@@ -66,8 +66,8 @@ const EVENT_LABELS: Record<string, string> = {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
-      <div style={{ color: '#6b7280', fontSize: 14 }}>{label}</div>
+    <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ color: 'var(--muted)', fontSize: 14 }}>{label}</div>
       <div>{children}</div>
     </div>
   )
@@ -129,7 +129,7 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
   ])
 
   if (error) {
-    return <p style={{ color: '#991b1b' }}>Could not load MAF: {error.message}</p>
+    return <p style={{ color: 'var(--bad)' }}>Could not load MAF: {error.message}</p>
   }
   if (!data) notFound()
 
@@ -159,28 +159,28 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       <h1 style={{ fontSize: '2rem', margin: '8px 0' }}>{maf.maf_number}</h1>
       <MaintenanceNav />
 
-      <div style={{ background: 'white', borderRadius: 12, padding: '8px 24px 16px', borderTop: `8px solid ${p.color}` }}>
+      <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '8px 24px 16px', borderTop: `8px solid ${p.color}` }}>
         <Row label="Priority">
-          <PriorityBadge priority={maf.priority} showLabel /> <span style={{ color: '#6b7280', fontSize: 14 }}>· {p.description}</span>
+          <PriorityBadge priority={maf.priority} showLabel /> <span style={{ color: 'var(--muted)', fontSize: 14 }}>· {p.description}</span>
         </Row>
         <Row label="Status">
           <strong>{STATUS_LABELS[maf.status]}</strong>
-          {overdue ? <span style={{ marginLeft: 10, fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>Overdue</span> : null}
-          <span style={{ marginLeft: 10, color: '#6b7280', fontSize: 14 }}>{age === 0 ? 'Opened today' : `${age} day${age === 1 ? '' : 's'} open`}</span>
+          {overdue ? <span style={{ marginLeft: 10, fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>Overdue</span> : null}
+          <span style={{ marginLeft: 10, color: 'var(--muted)', fontSize: 14 }}>{age === 0 ? 'Opened today' : `${age} day${age === 1 ? '' : 's'} open`}</span>
         </Row>
         <Row label="Location">
           {location}
           {maf.location_detail ? ` — ${maf.location_detail}` : ''}
           {maf.room_out_of_service ? (
-            <span style={{ marginLeft: 10, fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>Room out of service</span>
+            <span style={{ marginLeft: 10, fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>Room out of service</span>
           ) : null}
         </Row>
         <Row label="Assigned to">
           {assignee?.name ?? '—'}
-          {assignee?.role_label ? <span style={{ color: '#6b7280' }}> — {assignee.role_label}</span> : null}
-          {assignee?.phone ? <span style={{ color: '#6b7280' }}> · {assignee.phone}</span> : null}
+          {assignee?.role_label ? <span style={{ color: 'var(--muted)' }}> — {assignee.role_label}</span> : null}
+          {assignee?.phone ? <span style={{ color: 'var(--muted)' }}> · {assignee.phone}</span> : null}
           {assignee && assignee.kind !== 'staff' ? (
-            <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>Outside vendor — requires verified-by sign-off before closing.</div>
+            <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>Outside vendor — requires verified-by sign-off before closing.</div>
           ) : null}
         </Row>
         <Row label="Initiated by">{maf.initiated_by_name}</Row>
@@ -189,17 +189,17 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
           <div style={{ whiteSpace: 'pre-wrap' }}>{maf.description}</div>
         </Row>
         <Row label="Corrective action / notes">
-          {maf.completion_notes ? <div style={{ whiteSpace: 'pre-wrap' }}>{maf.completion_notes}</div> : <span style={{ color: '#9ca3af' }}>None yet</span>}
+          {maf.completion_notes ? <div style={{ whiteSpace: 'pre-wrap' }}>{maf.completion_notes}</div> : <span style={{ color: 'var(--muted)' }}>None yet</span>}
         </Row>
         {maf.cost !== null ? <Row label="Cost">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(maf.cost)}</Row> : null}
         {maf.verified_at ? (
           <Row label="Verified by">
-            {maf.verified_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(maf.verified_at)}</span>
+            {maf.verified_by_name ?? '—'} <span style={{ color: 'var(--muted)' }}>· {formatDateTime(maf.verified_at)}</span>
           </Row>
         ) : null}
         {maf.completed_at ? (
           <Row label={maf.status === 'cancelled' ? 'Cancelled by' : 'Completed by'}>
-            {maf.completed_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(maf.completed_at)}</span>
+            {maf.completed_by_name ?? '—'} <span style={{ color: 'var(--muted)' }}>· {formatDateTime(maf.completed_at)}</span>
           </Row>
         ) : null}
       </div>
@@ -240,18 +240,18 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
         />
       </div>
 
-      <div style={{ marginTop: 16, background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
+      <div style={{ marginTop: 16, background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Invoices for Jon</h2>
           <Link href={`/maintenance/invoices/new?maf=${maf.id}`} style={{ fontSize: 14, fontWeight: 600 }}>+ Log an invoice for this MAF</Link>
         </div>
         {((invoiceRows as { id: string; vendor_name: string; amount: number; invoice_date: string; status: string }[] | null) ?? []).length === 0 ? (
-          <p style={{ margin: 0, color: '#6b7280' }}>No invoices linked to this MAF.</p>
+          <p style={{ margin: 0, color: 'var(--muted)' }}>No invoices linked to this MAF.</p>
         ) : (
           ((invoiceRows as { id: string; vendor_name: string; amount: number; invoice_date: string; status: string }[] | null) ?? []).map((inv) => (
-            <Link key={inv.id} href={`/maintenance/invoices/${inv.id}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '8px 0', borderBottom: '1px solid #f1f5f9', textDecoration: 'none', color: 'inherit' }}>
+            <Link key={inv.id} href={`/maintenance/invoices/${inv.id}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--line)', textDecoration: 'none', color: 'inherit' }}>
               <span>
-                <strong>{inv.vendor_name}</strong> <span style={{ color: '#6b7280' }}>· {formatDate(inv.invoice_date)}</span> <InvoiceStatusBadge status={inv.status} />
+                <strong>{inv.vendor_name}</strong> <span style={{ color: 'var(--muted)' }}>· {formatDate(inv.invoice_date)}</span> <InvoiceStatusBadge status={inv.status} />
               </span>
               <strong>{currency.format(Number(inv.amount))}</strong>
             </Link>
@@ -260,9 +260,9 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
       </div>
 
       <h2 style={{ fontSize: '1.2rem', marginTop: 28 }}>History</h2>
-      <div style={{ background: 'white', borderRadius: 12, padding: '4px 20px' }}>
+      <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '4px 20px' }}>
         {((events as EventRow[] | null) ?? []).map((ev) => (
-          <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9', fontSize: 14 }}>
+          <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)', fontSize: 14 }}>
             <span>
               <strong>{EVENT_LABELS[ev.event] ?? ev.event}</strong>
               {(ev.event === 'status_changed' || ev.event === 'reopened') && ev.from_value && ev.to_value
@@ -272,9 +272,9 @@ export default async function MafDetailPage({ params }: { params: Promise<{ id: 
                 ? ` — ${ev.from_value ?? '—'} → ${ev.to_value}`
                 : ''}
               {ev.event === 'completed' && ev.from_value ? ` — from ${STATUS_LABELS[ev.from_value as MafStatus] ?? ev.from_value}` : ''}
-              {ev.by_name ? <span style={{ color: '#6b7280' }}> by {ev.by_name}</span> : null}
+              {ev.by_name ? <span style={{ color: 'var(--muted)' }}> by {ev.by_name}</span> : null}
             </span>
-            <span style={{ color: '#6b7280' }}>{formatDateTime(ev.created_at)}</span>
+            <span style={{ color: 'var(--muted)' }}>{formatDateTime(ev.created_at)}</span>
           </div>
         ))}
       </div>

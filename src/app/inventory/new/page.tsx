@@ -14,7 +14,7 @@ export default async function NewInventoryItemPage() {
   return (
     <div style={{ maxWidth: 820, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Add an Inventory Item</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Set a low-stock level so the item gets flagged when it&apos;s time to reorder.
       </p>
       <InventoryNav active="new" />

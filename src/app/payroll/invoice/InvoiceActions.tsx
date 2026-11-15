@@ -55,7 +55,7 @@ export default function InvoiceActions({
       <div className="flex flex-wrap items-center gap-4">
         <a
           href={downloadUrl}
-          className="inline-flex items-center rounded-md bg-black px-5 py-2.5 text-sm font-medium text-white"
+          className="inline-flex items-center rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-[var(--on-accent)]"
         >
           Download PDF
         </a>
@@ -64,7 +64,7 @@ export default function InvoiceActions({
           type="button"
           onClick={handleEmailPdf}
           disabled={sending}
-          className="inline-flex items-center rounded-md border border-blue-700 px-5 py-2.5 text-sm font-medium text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center rounded-md border border-[var(--info)] px-5 py-2.5 text-sm font-medium text-[var(--info)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {sending ? 'Sending…' : 'Email PDF'}
         </button>

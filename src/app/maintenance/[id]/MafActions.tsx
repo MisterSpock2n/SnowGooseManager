@@ -20,11 +20,11 @@ type Props = {
   assignees: Assignee[]
 }
 
-const card = { background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 14 } as const
-const input = { padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15, background: 'white' } as const
+const card = { background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 14 } as const
+const input = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const label = { fontWeight: 600, fontSize: 14 } as const
-const primary = { padding: '11px 18px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer' } as const
-const secondary = { padding: '11px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#0f172a', fontWeight: 600, fontSize: 15, cursor: 'pointer' } as const
+const primary = { padding: '11px 18px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, fontSize: 15, cursor: 'pointer' } as const
+const secondary = { padding: '11px 18px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)', color: 'var(--text)', fontWeight: 600, fontSize: 15, cursor: 'pointer' } as const
 
 export default function MafActions(props: Props) {
   const router = useRouter()
@@ -108,9 +108,9 @@ export default function MafActions(props: Props) {
   const feedback = message ? (
     <div
       style={{
-        background: message.kind === 'ok' ? '#ecfdf5' : '#fef2f2',
-        border: `1px solid ${message.kind === 'ok' ? '#a7f3d0' : '#fecaca'}`,
-        color: message.kind === 'ok' ? '#065f46' : '#991b1b',
+        background: message.kind === 'ok' ? 'var(--ok-bg)' : 'var(--bad-bg)',
+        border: `1px solid ${message.kind === 'ok' ? 'var(--ok-line)' : 'var(--bad-line)'}`,
+        color: message.kind === 'ok' ? 'var(--ok)' : 'var(--bad)',
         padding: '10px 14px',
         borderRadius: 8,
       }}
@@ -122,7 +122,7 @@ export default function MafActions(props: Props) {
   const notesField = (
     <div style={{ display: 'grid', gap: 6 }}>
       <label htmlFor="notes" style={label}>
-        Corrective action / completion notes <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+        Corrective action / completion notes <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>
       </label>
       <textarea
         id="notes"
@@ -138,7 +138,7 @@ export default function MafActions(props: Props) {
   const costField = (
     <div style={{ display: 'grid', gap: 6, maxWidth: 220 }}>
       <label htmlFor="cost" style={label}>
-        Cost <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional)</span>
+        Cost <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>
       </label>
       <input id="cost" type="number" min="0" step="0.01" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="0.00" style={input} />
     </div>
@@ -159,7 +159,7 @@ export default function MafActions(props: Props) {
             </div>
           </>
         ) : (
-          <p style={{ margin: 0, color: '#6b7280' }}>Only Nick, Rhiannon, or Jon can edit or reopen a closed MAF.</p>
+          <p style={{ margin: 0, color: 'var(--muted)' }}>Only Nick, Rhiannon, or Jon can edit or reopen a closed MAF.</p>
         )}
       </div>
     )
@@ -207,12 +207,12 @@ export default function MafActions(props: Props) {
         <button type="submit" disabled={busy} style={secondary}>{busy ? 'Saving…' : 'Save changes'}</button>
       </div>
 
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 16, display: 'grid', gap: 12 }}>
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 16, display: 'grid', gap: 12 }}>
         <h3 style={{ fontSize: '1rem', margin: 0 }}>Close out</h3>
         {props.canClose ? (
           <>
             {selectedIsVendor ? (
-              <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#fffbeb', border: '1px solid #fde68a', padding: 12, borderRadius: 8 }}>
+              <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--warn-bg)', border: '1px solid var(--warn-line)', padding: 12, borderRadius: 8 }}>
                 <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} style={{ marginTop: 3 }} />
                 <span>
                   <strong>Verified by me:</strong> I checked the outside vendor&apos;s work and it was completed satisfactorily.
@@ -220,14 +220,14 @@ export default function MafActions(props: Props) {
               </label>
             ) : null}
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button type="button" onClick={handleComplete} disabled={busy || (selectedIsVendor && !verified)} style={{ ...primary, background: '#15803d', opacity: selectedIsVendor && !verified ? 0.5 : 1 }}>
+              <button type="button" onClick={handleComplete} disabled={busy || (selectedIsVendor && !verified)} style={{ ...primary, background: 'var(--ok)', opacity: selectedIsVendor && !verified ? 0.5 : 1 }}>
                 Close as Completed
               </button>
               <button type="button" onClick={handleCancel} disabled={busy} style={secondary}>Cancel MAF</button>
             </div>
           </>
         ) : (
-          <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
+          <p style={{ margin: 0, color: 'var(--muted)', fontSize: 14 }}>
             Only Nick, Rhiannon, or Jon can close this MAF.
             {props.isVendor ? ' Set the status to Awaiting Verification when the vendor is done.' : ''}
           </p>
