@@ -46,8 +46,8 @@ export default function TimePage({
   initialEntries: TimeEntry[]
   loadError: string
 }) {
-  const [properties, setProperties] = useState<Property[]>(initialProperties)
-  const [users, setUsers] = useState<UserRow[]>(initialUsers)
+  const [properties] = useState<Property[]>(initialProperties)
+  const [users] = useState<UserRow[]>(initialUsers)
   const [entries, setEntries] = useState<TimeEntry[]>(initialEntries)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState(loadError)
@@ -105,38 +105,6 @@ export default function TimePage({
     }
   }
 
-  async function loadReferenceData() {
-    const [{ data: propertyData, error: propertyError }, { data: userData, error: userError }] =
-      await Promise.all([
-        supabase.from('properties').select('id, name').order('name'),
-        supabase.from('users').select('id, full_name').order('full_name'),
-      ])
-
-    if (propertyError) {
-      setMessage(`Could not load properties: ${propertyError.message}`)
-      return
-    }
-
-    if (userError) {
-      setMessage(`Could not load users: ${userError.message}`)
-      return
-    }
-
-    const safeProperties = propertyData ?? []
-    const safeUsers = userData ?? []
-
-    setProperties(safeProperties)
-    setUsers(safeUsers)
-
-    if (!propertyId && safeProperties.length > 0) {
-      setPropertyId(safeProperties[0].id)
-    }
-
-    if (!userId && safeUsers.length > 0) {
-      setUserId(safeUsers[0].id)
-    }
-  }
-
   async function loadEntries() {
   const { data, error } = await supabase
     .from('time_entries')
@@ -163,14 +131,6 @@ export default function TimePage({
   setEntries((data as TimeEntry[]) ?? [])
 }
 
-  useEffect(() => {
-    // If the server lists came back empty, try once more from the browser
-    if (initialProperties.length === 0 || initialUsers.length === 0) {
-      loadReferenceData()
-      loadEntries()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
   if (entryType !== 'hourly') return
