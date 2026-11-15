@@ -18,7 +18,7 @@ export const viewport: Viewport = {
   themeColor: '#efece4',
 }
 
-const THEME_SCRIPT = `try{var t=localStorage.getItem('sg-theme');if(t==='night'||t==='day'){document.documentElement.dataset.theme=t;if(t==='night'){document.addEventListener('DOMContentLoaded',function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#05060a')})}}}catch(e){}`
+const THEME_SCRIPT = `try{var t=localStorage.getItem('sg-theme');var c={day:'#efece4',night:'#05060a',muted:'#eceae6'};if(c[t]){document.documentElement.dataset.theme=t;document.addEventListener('DOMContentLoaded',function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',c[t])})}}catch(e){}`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

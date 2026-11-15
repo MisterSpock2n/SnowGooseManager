@@ -2,10 +2,12 @@
 
 import { useSyncExternalStore } from 'react'
 
-export type Theme = 'day' | 'night'
+export type Theme = 'day' | 'night' | 'muted'
 
 export const THEME_KEY = 'sg-theme'
-const THEME_COLORS: Record<Theme, string> = { day: '#efece4', night: '#05060a' }
+const THEME_COLORS: Record<Theme, string> = { day: '#efece4', night: '#05060a', muted: '#eceae6' }
+const ORDER: Theme[] = ['day', 'night', 'muted']
+const NAMES: Record<Theme, string> = { day: 'Day', night: 'Night', muted: 'Muted' }
 
 function subscribe(onChange: () => void) {
   const observer = new MutationObserver(onChange)
@@ -14,7 +16,8 @@ function subscribe(onChange: () => void) {
 }
 
 function currentTheme(): Theme {
-  return document.documentElement.dataset.theme === 'night' ? 'night' : 'day'
+  const t = document.documentElement.dataset.theme as Theme
+  return ORDER.includes(t) ? t : 'day'
 }
 
 export function applyTheme(theme: Theme) {
@@ -29,17 +32,17 @@ export function applyTheme(theme: Theme) {
 
 export default function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, currentTheme, () => 'day' as Theme)
-  const next: Theme = theme === 'night' ? 'day' : 'night'
+  const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]
 
   return (
     <button
       type="button"
       className="theme-toggle"
       onClick={() => applyTheme(next)}
-      aria-label={`Switch to the ${next === 'night' ? 'Night' : 'Day'} look`}
-      title={`Switch to ${next === 'night' ? 'Night' : 'Day'}`}
+      aria-label={`Look: ${NAMES[theme]}. Switch to ${NAMES[next]}`}
+      title={`Switch to ${NAMES[next]}`}
     >
-      {next === 'night' ? 'Night' : 'Day'}
+      {NAMES[theme]}
     </button>
   )
 }

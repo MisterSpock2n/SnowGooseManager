@@ -87,6 +87,41 @@
   color-scheme: dark;
 }
 
+/* Muted look: same layout, soft low-saturation colors */
+[data-theme="muted"] {
+  --bg: #eceae6;
+  --panel: #fbfaf8;
+  --panel-2: #f4f2ee;
+  --line: #dcd8d0;
+  --text: #262830;
+  --muted: #62646e;
+  --on-accent: #ffffff;
+
+  --dash: #6e6475;
+  --time: #8a6a52;
+  --pay: #7a7058;
+  --maint: #8a5a55;
+  --inv: #56677f;
+
+  --ok: #3f6e55;
+  --ok-bg: #e8efe9;
+  --ok-line: #c4d6ca;
+  --warn: #7a6230;
+  --warn-bg: #f4eedf;
+  --warn-line: #ddd0ad;
+  --bad: #8f4a42;
+  --bad-bg: #f4e7e4;
+  --bad-line: #dcc0ba;
+  --info: #4a5f7f;
+  --info-bg: #e8ecf2;
+  --info-line: #c6cfdc;
+
+  --frame: #7f7468;
+  --frame-2: #857a88;
+  --frame-3: #6f7c8c;
+  color-scheme: light;
+}
+
 /* Paper is always printed in the Day colors */
 @media print {
   [data-theme="night"] {
