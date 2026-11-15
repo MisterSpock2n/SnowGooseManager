@@ -22,7 +22,7 @@ export default async function NewMafPage() {
   return (
     <div style={{ maxWidth: 820, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>New Maintenance Action Form</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Report an issue so it can be assigned, tracked, and closed out.
       </p>
       <MaintenanceNav active="new" />

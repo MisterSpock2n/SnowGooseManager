@@ -6,9 +6,9 @@ import { createClient } from '@/lib/supabase-browser'
 import { fmtQty, plural, type TxnKind } from '@/lib/inventory'
 
 const KIND_UI: Record<TxnKind, { label: string; verb: string; bg: string; fg: string; prompt: string }> = {
-  received: { label: '+ Received', verb: 'Add', bg: '#16a34a', fg: 'white', prompt: 'How many came in?' },
-  used: { label: '− Used', verb: 'Remove', bg: '#0f172a', fg: 'white', prompt: 'How many were used?' },
-  count: { label: 'Count', verb: 'Set count', bg: 'white', fg: '#0f172a', prompt: 'How many are on hand now?' },
+  received: { label: '+ Received', verb: 'Add', bg: 'var(--ok)', fg: 'var(--on-accent)', prompt: 'How many came in?' },
+  used: { label: '− Used', verb: 'Remove', bg: 'var(--accent)', fg: 'var(--on-accent)', prompt: 'How many were used?' },
+  count: { label: 'Count', verb: 'Set count', bg: 'var(--panel)', fg: 'var(--text)', prompt: 'How many are on hand now?' },
 }
 
 export default function StockActions({
@@ -74,7 +74,7 @@ export default function StockActions({
         key={k}
         type="button"
         onClick={() => (kind === k ? setKind(null) : open(k))}
-        style={{ padding: compact ? '5px 10px' : '8px 14px', borderRadius: 8, border: u.bg === 'white' ? '1px solid #d1d5db' : 'none', background: kind === k ? '#e2e8f0' : u.bg, color: kind === k ? '#0f172a' : u.fg, fontWeight: 700, fontSize: compact ? 13 : 14, cursor: 'pointer', whiteSpace: 'nowrap' }}
+        style={{ padding: compact ? '5px 10px' : '8px 14px', borderRadius: 8, border: u.bg === 'var(--panel)' ? '1px solid var(--line)' : 'none', background: kind === k ? 'var(--line)' : u.bg, color: kind === k ? 'var(--text)' : u.fg, fontWeight: 700, fontSize: compact ? 13 : 14, cursor: 'pointer', whiteSpace: 'nowrap' }}
       >
         {u.label}
       </button>
@@ -87,7 +87,7 @@ export default function StockActions({
         {(['received', 'used', 'count'] as TxnKind[]).map(btn)}
       </div>
       {kind ? (
-        <form onSubmit={submit} style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: 8, padding: 8 }}>
+        <form onSubmit={submit} style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 8, padding: 8 }}>
           <label style={{ fontSize: 13, fontWeight: 600 }}>
             {KIND_UI[kind].prompt}{' '}
             <input
@@ -98,17 +98,17 @@ export default function StockActions({
               value={qty}
               onChange={(e) => setQty(e.target.value)}
               autoFocus
-              style={{ width: 80, padding: '6px 8px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: 14 }}
+              style={{ width: 80, padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 14 }}
             />{' '}
-            <span style={{ fontWeight: 400, color: '#6b7280' }}>{plural(unit, Number(qty) || 0)}</span>
+            <span style={{ fontWeight: 400, color: 'var(--muted)' }}>{plural(unit, Number(qty) || 0)}</span>
           </label>
-          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" aria-label="Note" style={{ width: compact ? 140 : 220, padding: '6px 8px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: 14 }} />
-          <button type="submit" disabled={busy} style={{ padding: '6px 12px', borderRadius: 6, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, cursor: 'pointer' }}>
+          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" aria-label="Note" style={{ width: compact ? 140 : 220, padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 14 }} />
+          <button type="submit" disabled={busy} style={{ padding: '6px 12px', borderRadius: 6, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, cursor: 'pointer' }}>
             {busy ? 'Saving…' : 'Save'}
           </button>
         </form>
       ) : null}
-      {message ? <span style={{ fontSize: 12, color: ok ? '#166534' : '#991b1b' }}>{message}</span> : null}
+      {message ? <span style={{ fontSize: 12, color: ok ? 'var(--ok)' : 'var(--bad)' }}>{message}</span> : null}
     </div>
   )
 }

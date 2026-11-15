@@ -81,7 +81,7 @@ if (claimsError || !claimsData?.claims) {
     return (
       <main className="p-6">
         <h1 className="mb-4 text-2xl font-semibold">Invoice Preview</h1>
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
+        <div className="rounded-lg border border-[var(--warn-line)] bg-[var(--warn-bg)] p-4 text-[var(--warn)]">
           Missing required invoice parameters.
         </div>
       </main>
@@ -117,7 +117,7 @@ if (claimsError || !claimsData?.claims) {
     return (
       <main className="p-6">
         <h1 className="mb-4 text-2xl font-semibold">Invoice Preview</h1>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="rounded-lg border border-[var(--bad-line)] bg-[var(--bad-bg)] p-4 text-[var(--bad)]">
           Error loading invoice data: {error.message}
         </div>
       </main>
@@ -153,13 +153,13 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
     .reduce((sum, entry) => sum + (entry.hours_worked ?? 0), 0)
 
   return (
-    <main className="invoice-page min-h-screen bg-gray-50 p-6">
+    <main className="invoice-page min-h-screen bg-[var(--panel-2)] p-6">
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="invoice-toolbar flex flex-col gap-6">
           <div className="flex flex-wrap items-start gap-4">
             <Link
               href={`/payroll?start=${startDate}&end=${endDate}&user=${userId}`}
-              className="inline-flex items-center rounded-md border bg-white px-5 py-2.5 text-sm font-medium"
+              className="inline-flex items-center rounded-md border bg-[var(--panel)] px-5 py-2.5 text-sm font-medium"
             >
               ← Back to Payroll
             </Link>
@@ -169,18 +169,18 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
 
           <div>
             <h1 className="text-2xl font-semibold">Invoice Preview</h1>
-            <p className="mt-1 text-sm text-gray-600">Payroll invoice for {employeeName}</p>
+            <p className="mt-1 text-sm text-[var(--muted)]">Payroll invoice for {employeeName}</p>
           </div>
         </div>
 
-        <section className="invoice-sheet rounded-2xl border bg-white p-8 shadow-sm">
+        <section className="invoice-sheet rounded-2xl border bg-[var(--panel)] p-8 shadow-sm">
           <div className="flex flex-col gap-6 border-b pb-6 md:flex-row md:items-start md:justify-between">
             <div>
               <h2 className="text-2xl font-bold">Snow Goose Inn</h2>
-              <p className="mt-1 text-sm text-gray-600">Payroll Invoice</p>
+              <p className="mt-1 text-sm text-[var(--muted)]">Payroll Invoice</p>
             </div>
 
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-[var(--text)]">
               <div><span className="font-medium">Employee:</span> {employeeName}</div>
               <div><span className="font-medium">Period:</span> {formatDate(startDate)} - {formatDate(endDate)}</div>
               <div>
@@ -196,23 +196,23 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
           </div>
 
           <div className="invoice-summary mt-6 grid gap-4 md:grid-cols-4">
-            <div className="rounded-xl bg-gray-50 p-4">
-              <div className="text-sm text-gray-500">Gross pay</div>
+            <div className="rounded-xl bg-[var(--panel-2)] p-4">
+              <div className="text-sm text-[var(--muted)]">Gross pay</div>
               <div className="mt-2 text-xl font-semibold">{formatCurrency(totalPay)}</div>
             </div>
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              <div className="text-sm text-gray-500">Total hours</div>
+            <div className="rounded-xl bg-[var(--panel-2)] p-4">
+              <div className="text-sm text-[var(--muted)]">Total hours</div>
               <div className="mt-2 text-xl font-semibold">{totalHours.toFixed(2)}</div>
             </div>
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              <div className="text-sm text-gray-500">Overnights</div>
+            <div className="rounded-xl bg-[var(--panel-2)] p-4">
+              <div className="text-sm text-[var(--muted)]">Overnights</div>
               <div className="mt-2 text-xl font-semibold">{overnightCount}</div>
             </div>
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              <div className="text-sm text-gray-500">Overnight revenue</div>
+            <div className="rounded-xl bg-[var(--panel-2)] p-4">
+              <div className="text-sm text-[var(--muted)]">Overnight revenue</div>
               <div className="mt-2 text-xl font-semibold">
                 {formatCurrency(overnightRevenue)}
               </div>
@@ -221,7 +221,7 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
 
           <div className="invoice-table-wrap mt-8 overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 text-left">
+              <thead className="bg-[var(--panel-2)] text-left">
                 <tr>
                   <th className="px-4 py-3 font-medium">Date</th>
                   <th className="px-4 py-3 font-medium">Property</th>
@@ -255,7 +255,7 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
           </div>
 
           <div className="invoice-totals mt-8 grid gap-4 border-t pt-6 md:grid-cols-2">
-  <div className="space-y-2 text-sm text-gray-700">
+  <div className="space-y-2 text-sm text-[var(--text)]">
     <div className="flex justify-between gap-4">
       <span>Cleaning hours</span>
       <span className="font-medium">{cleaningHours.toFixed(2)}</span>
@@ -274,14 +274,14 @@ const generatedDate = new Intl.DateTimeFormat('en-US', {
     </div>
   </div>
 
-  <div className="invoice-total-box rounded-xl bg-gray-50 p-4">
+  <div className="invoice-total-box rounded-xl bg-[var(--panel-2)] p-4">
     <div className="flex items-center justify-between text-sm">
       <span>Total gross pay</span>
       <span className="text-lg font-semibold">{formatCurrency(totalPay)}</span>
     </div>
   </div>
 </div>
-            <div className="invoice-footer mt-8 border-t pt-4 text-sm text-gray-500">
+            <div className="invoice-footer mt-8 border-t pt-4 text-sm text-[var(--muted)]">
                     Generated on {generatedDate} · Snow Goose Inn Payroll Invoice
             </div>
         </section>

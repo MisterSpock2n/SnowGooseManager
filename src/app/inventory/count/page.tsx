@@ -21,13 +21,13 @@ export default async function CountSheetPage() {
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
       <div className="no-print">
         <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Count sheet</h1>
-        <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+        <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
           Walk a storage spot and type what is on the shelf. Leave a line blank to skip it. Nothing changes until you press Save counts.
         </p>
         <InventoryNav active="count" />
       </div>
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10 }}>
           Could not load inventory: {error.message}
         </div>
       ) : (

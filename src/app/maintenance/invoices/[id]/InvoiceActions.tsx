@@ -6,10 +6,10 @@ import { createClient } from '@/lib/supabase-browser'
 import { INVOICE_BUCKET, type InvoiceStatus } from '@/lib/invoices'
 import type { InvoiceDetail } from './page'
 
-const inputStyle = { padding: '9px 11px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15, background: 'white' } as const
+const inputStyle = { padding: '9px 11px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
-const btn = (bg: string, fg = 'white') =>
-  ({ padding: '10px 16px', borderRadius: 8, border: bg === 'white' ? '1px solid #d1d5db' : 'none', background: bg, color: fg, fontWeight: 700, cursor: 'pointer' }) as const
+const btn = (bg: string, fg = 'var(--on-accent)') =>
+  ({ padding: '10px 16px', borderRadius: 8, border: bg === 'var(--panel)' ? '1px solid var(--line)' : 'none', background: bg, color: fg, fontWeight: 700, cursor: 'pointer' }) as const
 
 export default function InvoiceActions({ invoice, canManage }: { invoice: InvoiceDetail; canManage: boolean }) {
   const router = useRouter()
@@ -80,38 +80,38 @@ export default function InvoiceActions({ invoice, canManage }: { invoice: Invoic
   const s = invoice.status
 
   return (
-    <div style={{ background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 16 }}>
+    <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 16 }}>
       <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Actions</h2>
 
       {canManage ? (
         <div style={{ display: 'grid', gap: 10 }}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {s === 'new' ? <button type="button" disabled={busy} onClick={() => setStatus('seen')} style={btn('#f59e0b', '#1f1f1f')}>Mark seen</button> : null}
-            {s !== 'paid' ? <button type="button" disabled={busy} onClick={() => setPaying(true)} style={btn('#16a34a')}>Mark paid</button> : null}
-            {s === 'new' || s === 'seen' ? <button type="button" disabled={busy} onClick={() => setStatus('disputed')} style={btn('white', '#991b1b')}>Dispute</button> : null}
-            {s === 'disputed' ? <button type="button" disabled={busy} onClick={() => setStatus('seen')} style={btn('white', '#0f172a')}>Resolve dispute</button> : null}
-            {s === 'paid' ? <button type="button" disabled={busy} onClick={() => setStatus('seen')} style={btn('white', '#0f172a')}>Undo paid</button> : null}
+            {s !== 'paid' ? <button type="button" disabled={busy} onClick={() => setPaying(true)} style={btn('var(--ok)')}>Mark paid</button> : null}
+            {s === 'new' || s === 'seen' ? <button type="button" disabled={busy} onClick={() => setStatus('disputed')} style={btn('var(--panel)', 'var(--bad)')}>Dispute</button> : null}
+            {s === 'disputed' ? <button type="button" disabled={busy} onClick={() => setStatus('seen')} style={btn('var(--panel)', 'var(--text)')}>Resolve dispute</button> : null}
+            {s === 'paid' ? <button type="button" disabled={busy} onClick={() => setStatus('seen')} style={btn('var(--panel)', 'var(--text)')}>Undo paid</button> : null}
           </div>
           {paying ? (
-            <div style={{ display: 'grid', gap: 8, background: '#f0fdf4', borderRadius: 8, padding: 12 }}>
-              <label htmlFor="paidNote" style={labelStyle}>Payment note <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional, e.g. check # or card)</span></label>
+            <div style={{ display: 'grid', gap: 8, background: 'var(--ok-bg)', borderRadius: 8, padding: 12 }}>
+              <label htmlFor="paidNote" style={labelStyle}>Payment note <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional, e.g. check # or card)</span></label>
               <input id="paidNote" value={paidNote} onChange={(e) => setPaidNote(e.target.value)} style={inputStyle} placeholder="Check #1042" />
               <div style={{ display: 'flex', gap: 8 }}>
-                <button type="button" disabled={busy} onClick={() => setStatus('paid', { paid_note: paidNote.trim() || null })} style={btn('#16a34a')}>Confirm paid</button>
-                <button type="button" onClick={() => setPaying(false)} style={btn('white', '#0f172a')}>Cancel</button>
+                <button type="button" disabled={busy} onClick={() => setStatus('paid', { paid_note: paidNote.trim() || null })} style={btn('var(--ok)')}>Confirm paid</button>
+                <button type="button" onClick={() => setPaying(false)} style={btn('var(--panel)', 'var(--text)')}>Cancel</button>
               </div>
             </div>
           ) : null}
         </div>
       ) : (
-        <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>Nick, Rhiannon or Jon can mark this invoice seen, paid or disputed.</p>
+        <p style={{ margin: 0, color: 'var(--muted)', fontSize: 14 }}>Nick, Rhiannon or Jon can mark this invoice seen, paid or disputed.</p>
       )}
 
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 14 }}>
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 14 }}>
         {!editing ? (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button type="button" onClick={() => setEditing(true)} style={btn('white', '#0f172a')}>Edit details</button>
-            {canManage ? <button type="button" disabled={busy} onClick={deleteInvoice} style={btn('white', '#991b1b')}>Delete invoice</button> : null}
+            <button type="button" onClick={() => setEditing(true)} style={btn('var(--panel)', 'var(--text)')}>Edit details</button>
+            {canManage ? <button type="button" disabled={busy} onClick={deleteInvoice} style={btn('var(--panel)', 'var(--bad)')}>Delete invoice</button> : null}
           </div>
         ) : (
           <form onSubmit={saveEdits} style={{ display: 'grid', gap: 12 }}>
@@ -124,14 +124,14 @@ export default function InvoiceActions({ invoice, canManage }: { invoice: Invoic
             </div>
             <label style={{ display: 'grid', gap: 6 }}><span style={labelStyle}>Notes for Jon</span><textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }} /></label>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="submit" disabled={busy} style={btn('#0f172a')}>{busy ? 'Saving…' : 'Save changes'}</button>
-              <button type="button" onClick={() => setEditing(false)} style={btn('white', '#0f172a')}>Cancel</button>
+              <button type="submit" disabled={busy} style={btn('var(--accent)')}>{busy ? 'Saving…' : 'Save changes'}</button>
+              <button type="button" onClick={() => setEditing(false)} style={btn('var(--panel)', 'var(--text)')}>Cancel</button>
             </div>
           </form>
         )}
       </div>
 
-      {message ? <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8 }}>{message}</div> : null}
+      {message ? <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '10px 14px', borderRadius: 8 }}>{message}</div> : null}
     </div>
   )
 }

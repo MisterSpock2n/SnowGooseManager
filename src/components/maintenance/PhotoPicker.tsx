@@ -26,8 +26,8 @@ export default function PhotoPicker({
           width: 'fit-content',
           padding: '9px 14px',
           borderRadius: 8,
-          border: '1px dashed #94a3b8',
-          background: '#f8fafc',
+          border: '1px dashed var(--muted)',
+          background: 'var(--panel-2)',
           cursor: 'pointer',
           fontWeight: 600,
           fontSize: 14,
@@ -52,7 +52,7 @@ export default function PhotoPicker({
           {previews.map((src, i) => (
             <div key={src} style={{ position: 'relative' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={files[i]?.name ?? 'Selected photo'} style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, border: '1px solid #e5e7eb' }} />
+              <img src={src} alt={files[i]?.name ?? 'Selected photo'} style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--line)' }} />
               <button
                 type="button"
                 aria-label={`Remove ${files[i]?.name ?? 'photo'}`}
@@ -65,8 +65,8 @@ export default function PhotoPicker({
                   height: 24,
                   borderRadius: 999,
                   border: 'none',
-                  background: '#0f172a',
-                  color: 'white',
+                  background: 'var(--accent)',
+                  color: 'var(--on-accent)',
                   cursor: 'pointer',
                   fontWeight: 700,
                   lineHeight: '24px',
@@ -78,7 +78,7 @@ export default function PhotoPicker({
           ))}
         </div>
       ) : (
-        <span style={{ fontSize: 13, color: '#6b7280' }}>Up to 10 photos. Large phone photos are shrunk automatically.</span>
+        <span style={{ fontSize: 13, color: 'var(--muted)' }}>Up to 10 photos. Large phone photos are shrunk automatically.</span>
       )}
     </div>
   )

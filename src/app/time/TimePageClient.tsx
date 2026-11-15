@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase-browser'
 
-type Property = {
+export type Property = {
   id: string
   name: string
 }
 
-type UserRow = {
+export type UserRow = {
   id: string
   full_name: string
 }
 
-type TimeEntry = {
+export type TimeEntry = {
   id: string
   entry_date: string
   entry_type: 'hourly' | 'overnight'
@@ -27,16 +27,34 @@ type TimeEntry = {
   users: { full_name: string | null } | { full_name: string | null }[] | null
 }
 
-export default function TimePage() {
-  const [properties, setProperties] = useState<Property[]>([])
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [entries, setEntries] = useState<TimeEntry[]>([])
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+function localToday() {
+  const d = new Date()
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().slice(0, 10)
+}
 
-  const [propertyId, setPropertyId] = useState('')
-  const [userId, setUserId] = useState('')
-  const [entryDate, setEntryDate] = useState(new Date().toISOString().slice(0, 10))
+// Lists are loaded on the server (see page.tsx) so the form never comes up empty
+// while the browser is still picking up the sign-in.
+export default function TimePage({
+  initialProperties,
+  initialUsers,
+  initialEntries,
+  loadError,
+}: {
+  initialProperties: Property[]
+  initialUsers: UserRow[]
+  initialEntries: TimeEntry[]
+  loadError: string
+}) {
+  const [properties] = useState<Property[]>(initialProperties)
+  const [users] = useState<UserRow[]>(initialUsers)
+  const [entries, setEntries] = useState<TimeEntry[]>(initialEntries)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState(loadError)
+
+  const [propertyId, setPropertyId] = useState(initialProperties[0]?.id ?? '')
+  const [userId, setUserId] = useState(initialUsers[0]?.id ?? '')
+  const [entryDate, setEntryDate] = useState(localToday)
   const [entryType, setEntryType] = useState<'hourly' | 'overnight'>('hourly')
   const [workType, setWorkType] = useState<'cleaning' | 'maintenance' | 'it' | 'general'>('cleaning')
   const [hoursWorked, setHoursWorked] = useState('1')
@@ -87,38 +105,6 @@ export default function TimePage() {
     }
   }
 
-  async function loadReferenceData() {
-    const [{ data: propertyData, error: propertyError }, { data: userData, error: userError }] =
-      await Promise.all([
-        supabase.from('properties').select('id, name').order('name'),
-        supabase.from('users').select('id, full_name').order('full_name'),
-      ])
-
-    if (propertyError) {
-      setMessage(`Could not load properties: ${propertyError.message}`)
-      return
-    }
-
-    if (userError) {
-      setMessage(`Could not load users: ${userError.message}`)
-      return
-    }
-
-    const safeProperties = propertyData ?? []
-    const safeUsers = userData ?? []
-
-    setProperties(safeProperties)
-    setUsers(safeUsers)
-
-    if (!propertyId && safeProperties.length > 0) {
-      setPropertyId(safeProperties[0].id)
-    }
-
-    if (!userId && safeUsers.length > 0) {
-      setUserId(safeUsers[0].id)
-    }
-  }
-
   async function loadEntries() {
   const { data, error } = await supabase
     .from('time_entries')
@@ -145,13 +131,6 @@ export default function TimePage() {
   setEntries((data as TimeEntry[]) ?? [])
 }
 
-  useEffect(() => {
-    async function init() {
-      await loadReferenceData()
-      await loadEntries()
-    }
-    init()
-  }, [])
 
   useEffect(() => {
   if (entryType !== 'hourly') return
@@ -263,7 +242,7 @@ if (entryType === 'hourly') {
   return (
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>Time Entry</h1>
-      <p style={{ marginBottom: '24px', color: '#666' }}>
+      <p style={{ marginBottom: '24px', color: 'var(--muted)' }}>
         Log hourly work and overnight pay entries for Snow Goose payroll.
       </p>
 
@@ -378,7 +357,7 @@ if (entryType === 'hourly') {
                 </button>
               </div>
               {revenueLookup.message ? (
-                <p style={{ margin: 0, fontSize: '0.875rem', color: revenueLookup.error ? '#b91c1c' : '#4b5563' }}>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: revenueLookup.error ? 'var(--bad)' : 'var(--muted)' }}>
                   {revenueLookup.message}
                 </p>
               ) : null}
@@ -406,7 +385,7 @@ if (entryType === 'hourly') {
         <div
           style={{
             padding: '12px 16px',
-            background: '#f4f4f5',
+            background: 'var(--panel-2)',
             borderRadius: '8px',
             fontWeight: 600,
           }}
@@ -420,8 +399,8 @@ if (entryType === 'hourly') {
           style={{
             padding: '12px 16px',
             borderRadius: '8px',
-            background: '#111827',
-            color: 'white',
+            background: 'var(--accent)',
+            color: 'var(--on-accent)',
             border: 'none',
           }}
         >
@@ -438,10 +417,10 @@ if (entryType === 'hourly') {
             <div
               key={entry.id}
               style={{
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--line)',
                 borderRadius: '10px',
                 padding: '16px 20  px',
-                background: entry.entry_type === 'overnight' ? '#fff7ed' : '#f8fafc',
+                background: entry.entry_type === 'overnight' ? 'var(--warn-bg)' : 'var(--panel-2)',
                 lineHeight: '1.5'
               }}
             >
@@ -480,9 +459,9 @@ if (entryType === 'hourly') {
       style={{
         padding: '6px 10px',
         borderRadius: '8px',
-        border: '1px solid #dc2626',
-        background: 'white',
-        color: '#dc2626',
+        border: '1px solid var(--bad)',
+        background: 'var(--panel)',
+        color: 'var(--bad)',
         cursor: loading ? 'not-allowed' : 'pointer',
       }}
     >

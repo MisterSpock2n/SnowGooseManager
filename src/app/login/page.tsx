@@ -40,14 +40,14 @@ export default function LoginPage() {
         style={{
           width: '100%',
           maxWidth: '420px',
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--line)',
           borderRadius: '12px',
           padding: '24px',
-          background: 'white',
+          background: 'var(--panel)',
         }}
       >
         <h1 style={{ fontSize: '1.75rem', marginBottom: '8px' }}>Sign in</h1>
-        <p style={{ color: '#666', marginBottom: '20px' }}>
+        <p style={{ color: 'var(--muted)', marginBottom: '20px' }}>
           Sign in to access Snow Goose operations.
         </p>
 
@@ -60,7 +60,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+              style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--line)' }}
             />
           </div>
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+              style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--line)' }}
             />
           </div>
 
@@ -85,15 +85,15 @@ export default function LoginPage() {
             style={{
               padding: '12px 16px',
               borderRadius: '8px',
-              background: '#111827',
-              color: 'white',
+              background: 'var(--accent)',
+              color: 'var(--on-accent)',
               border: 'none',
             }}
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
 
-          {message ? <p style={{ color: '#b91c1c' }}>{message}</p> : null}
+          {message ? <p style={{ color: 'var(--bad)' }}>{message}</p> : null}
         </form>
       </div>
     </main>

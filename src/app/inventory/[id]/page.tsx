@@ -23,8 +23,8 @@ type Txn = {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '170px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
-      <div style={{ color: '#6b7280', fontSize: 14 }}>{label}</div>
+    <div style={{ display: 'grid', gridTemplateColumns: '170px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ color: 'var(--muted)', fontSize: 14 }}>{label}</div>
       <div>{children}</div>
     </div>
   )
@@ -56,7 +56,7 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
     supabase.from('inventory_items').select('unit'),
   ])
 
-  if (error) return <p style={{ color: '#991b1b' }}>Could not load item: {error.message}</p>
+  if (error) return <p style={{ color: 'var(--bad)' }}>Could not load item: {error.message}</p>
   if (!data) notFound()
   const item = data as InventoryItem
   const s = stockState(item)
@@ -69,18 +69,18 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
       <h1 style={{ fontSize: '2rem', margin: '8px 0' }}>{item.name}</h1>
       <InventoryNav />
 
-      <div style={{ background: 'white', borderRadius: 12, padding: '8px 24px 16px', borderTop: `8px solid ${cat.color}` }}>
+      <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '8px 24px 16px', borderTop: `8px solid ${cat.color}` }}>
         <Row label="On hand">
           <strong style={{ fontSize: 22 }}>{s === 'uncounted' ? '—' : fmtQty(item.quantity_on_hand)}</strong> {plural(item.unit, Number(item.quantity_on_hand))}{' '}
           <StockBadge state={s} />
-          {!item.active ? <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, color: '#4b5563', background: '#f3f4f6', padding: '2px 8px', borderRadius: 999 }}>Archived</span> : null}
+          {!item.active ? <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, color: 'var(--muted)', background: 'var(--panel-2)', padding: '2px 8px', borderRadius: 999 }}>Archived</span> : null}
         </Row>
         <Row label="Category">{cat.label}</Row>
-        <Row label="Low-stock level">{Number(item.reorder_level) > 0 ? `${fmtQty(item.reorder_level)} ${plural(item.unit, Number(item.reorder_level))}` : <span style={{ color: '#9ca3af' }}>Not set (never flagged)</span>}</Row>
-        <Row label="Usual order amount">{item.reorder_quantity ? `${fmtQty(item.reorder_quantity)} ${plural(item.unit, Number(item.reorder_quantity))}` : <span style={{ color: '#9ca3af' }}>—</span>}</Row>
-        <Row label="Storage spot">{item.storage_location ?? <span style={{ color: '#9ca3af' }}>—</span>}</Row>
+        <Row label="Low-stock level">{Number(item.reorder_level) > 0 ? `${fmtQty(item.reorder_level)} ${plural(item.unit, Number(item.reorder_level))}` : <span style={{ color: 'var(--muted)' }}>Not set (never flagged)</span>}</Row>
+        <Row label="Usual order amount">{item.reorder_quantity ? `${fmtQty(item.reorder_quantity)} ${plural(item.unit, Number(item.reorder_quantity))}` : <span style={{ color: 'var(--muted)' }}>—</span>}</Row>
+        <Row label="Storage spot">{item.storage_location ?? <span style={{ color: 'var(--muted)' }}>—</span>}</Row>
         <Row label="Where to buy">
-          {item.vendor ?? <span style={{ color: '#9ca3af' }}>—</span>}
+          {item.vendor ?? <span style={{ color: 'var(--muted)' }}>—</span>}
           {item.reorder_url ? (
             <>
               {' · '}
@@ -89,11 +89,11 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
           ) : null}
         </Row>
         {item.notes ? <Row label="Notes"><div style={{ whiteSpace: 'pre-wrap' }}>{item.notes}</div></Row> : null}
-        <Row label="Last counted">{item.last_counted_at ? formatDateTime(item.last_counted_at) : <span style={{ color: '#9ca3af' }}>Never</span>}</Row>
+        <Row label="Last counted">{item.last_counted_at ? formatDateTime(item.last_counted_at) : <span style={{ color: 'var(--muted)' }}>Never</span>}</Row>
       </div>
 
       {item.active ? (
-        <div style={{ marginTop: 16, background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
+        <div style={{ marginTop: 16, background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
           <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Log stock</h2>
           <StockActions itemId={item.id} itemName={item.name} unit={item.unit} onHand={Number(item.quantity_on_hand)} />
         </div>
@@ -104,20 +104,20 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
       </div>
 
       <h2 style={{ fontSize: '1.2rem', marginTop: 28 }}>History</h2>
-      <div style={{ background: 'white', borderRadius: 12, padding: '4px 20px' }}>
-        {history.length === 0 ? <p style={{ color: '#6b7280' }}>No stock activity yet.</p> : null}
+      <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '4px 20px' }}>
+        {history.length === 0 ? <p style={{ color: 'var(--muted)' }}>No stock activity yet.</p> : null}
         {history.map((t) => {
           const delta = Number(t.quantity_delta ?? 0)
           return (
-            <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9', fontSize: 14, flexWrap: 'wrap' }}>
+            <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)', fontSize: 14, flexWrap: 'wrap' }}>
               <span>
                 <strong>{TXN_LABELS[t.kind]}</strong>{' '}
                 {t.kind === 'count' ? `${fmtQty(t.quantity)}` : fmtQty(t.quantity)} {plural(item.unit, Number(t.quantity))}
                 {t.kind === 'count' ? (
-                  <span style={{ color: delta === 0 ? '#6b7280' : delta > 0 ? '#166534' : '#991b1b' }}> ({delta > 0 ? '+' : ''}{fmtQty(delta)})</span>
+                  <span style={{ color: delta === 0 ? 'var(--muted)' : delta > 0 ? 'var(--ok)' : 'var(--bad)' }}> ({delta > 0 ? '+' : ''}{fmtQty(delta)})</span>
                 ) : null}
-                <span style={{ color: '#6b7280' }}> → {fmtQty(t.quantity_after)} on hand</span>
-                {t.note ? <span style={{ color: '#374151' }}> · {t.note}</span> : null}
+                <span style={{ color: 'var(--muted)' }}> → {fmtQty(t.quantity_after)} on hand</span>
+                {t.note ? <span style={{ color: 'var(--text)' }}> · {t.note}</span> : null}
                 {t.related_action_id ? (
                   <>
                     {' · '}
@@ -126,9 +126,9 @@ export default async function InventoryItemPage({ params }: { params: Promise<{ 
                     </Link>
                   </>
                 ) : null}
-                {t.created_by_name ? <span style={{ color: '#6b7280' }}> · by {t.created_by_name}</span> : null}
+                {t.created_by_name ? <span style={{ color: 'var(--muted)' }}> · by {t.created_by_name}</span> : null}
               </span>
-              <span style={{ color: '#6b7280' }}>{formatDateTime(t.created_at)}</span>
+              <span style={{ color: 'var(--muted)' }}>{formatDateTime(t.created_at)}</span>
             </div>
           )
         })}

@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase-browser'
 import ItemForm from '@/components/inventory/ItemForm'
 import type { InventoryItem } from '@/lib/inventory'
 
-const btn = (fg: string) => ({ padding: '10px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: fg, fontWeight: 700, cursor: 'pointer' }) as const
+const btn = (fg: string) => ({ padding: '10px 16px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)', color: fg, fontWeight: 700, cursor: 'pointer' }) as const
 
 export default function ItemManage({ item, canDelete, hasHistory, unitsInUse }: { item: InventoryItem; canDelete: boolean; hasHistory: boolean; unitsInUse: string[] }) {
   const router = useRouter()
@@ -37,17 +37,17 @@ export default function ItemManage({ item, canDelete, hasHistory, unitsInUse }: 
   if (editing) return <ItemForm item={item} onDone={() => setEditing(false)} unitsInUse={unitsInUse} />
 
   return (
-    <div style={{ background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
+    <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button type="button" onClick={() => setEditing(true)} style={btn('#0f172a')}>Edit item</button>
+        <button type="button" onClick={() => setEditing(true)} style={btn('var(--accent)')}>Edit item</button>
         {item.active ? (
-          <button type="button" disabled={busy} onClick={() => setActive(false)} style={btn('#4b5563')}>Archive (no longer stocked)</button>
+          <button type="button" disabled={busy} onClick={() => setActive(false)} style={btn('var(--muted)')}>Archive (no longer stocked)</button>
         ) : (
-          <button type="button" disabled={busy} onClick={() => setActive(true)} style={btn('#166534')}>Restore item</button>
+          <button type="button" disabled={busy} onClick={() => setActive(true)} style={btn('var(--ok)')}>Restore item</button>
         )}
-        {canDelete ? <button type="button" disabled={busy} onClick={remove} style={btn('#991b1b')}>Delete</button> : null}
+        {canDelete ? <button type="button" disabled={busy} onClick={remove} style={btn('var(--bad)')}>Delete</button> : null}
       </div>
-      {message ? <div style={{ color: '#991b1b', fontSize: 14 }}>{message}</div> : null}
+      {message ? <div style={{ color: 'var(--bad)', fontSize: 14 }}>{message}</div> : null}
     </div>
   )
 }

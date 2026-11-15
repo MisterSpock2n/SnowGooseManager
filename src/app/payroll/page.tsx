@@ -81,7 +81,7 @@ if (claimsError || !claimsData?.claims) {
     return (
       <main className="p-6">
         <h1 className="mb-4 text-2xl font-semibold">Payroll</h1>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="rounded-lg border border-[var(--bad-line)] bg-[var(--bad-bg)] p-4 text-[var(--bad)]">
           Error loading users: {usersError.message}
         </div>
       </main>
@@ -118,7 +118,7 @@ if (claimsError || !claimsData?.claims) {
     return (
       <main className="p-6">
         <h1 className="mb-4 text-2xl font-semibold">Payroll</h1>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="rounded-lg border border-[var(--bad-line)] bg-[var(--bad-bg)] p-4 text-[var(--bad)]">
           Error loading payroll data: {error.message}
         </div>
       </main>
@@ -169,7 +169,7 @@ if (claimsError || !claimsData?.claims) {
     <main className="space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-semibold">Payroll</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-[var(--muted)]">
           Review payroll totals by date range and employee.
         </p>
       </div>
@@ -223,7 +223,7 @@ if (claimsError || !claimsData?.claims) {
         <div className="flex items-end">
           <button
             type="submit"
-            className="w-full rounded-md bg-black px-4 py-2 text-white"
+            className="w-full rounded-md bg-[var(--accent)] px-4 py-2 text-[var(--on-accent)]"
           >
             Run Payroll
           </button>
@@ -232,24 +232,24 @@ if (claimsError || !claimsData?.claims) {
 
       <section className="grid gap-4 md:grid-cols-4">
         <div className="rounded-xl border p-4">
-          <div className="text-sm text-gray-500">Total gross pay</div>
+          <div className="text-sm text-[var(--muted)]">Total gross pay</div>
           <div className="mt-2 text-2xl font-semibold">
             {formatCurrency(totalGrossPay)}
           </div>
         </div>
 
         <div className="rounded-xl border p-4">
-          <div className="text-sm text-gray-500">Total hours</div>
+          <div className="text-sm text-[var(--muted)]">Total hours</div>
           <div className="mt-2 text-2xl font-semibold">{totalHours.toFixed(2)}</div>
         </div>
 
         <div className="rounded-xl border p-4">
-          <div className="text-sm text-gray-500">Overnight stays</div>
+          <div className="text-sm text-[var(--muted)]">Overnight stays</div>
           <div className="mt-2 text-2xl font-semibold">{overnightCount}</div>
         </div>
 
         <div className="rounded-xl border p-4">
-          <div className="text-sm text-gray-500">Total entries</div>
+          <div className="text-sm text-[var(--muted)]">Total entries</div>
           <div className="mt-2 text-2xl font-semibold">{totalEntries}</div>
         </div>
       </section>
@@ -260,13 +260,13 @@ if (claimsError || !claimsData?.claims) {
         </div>
 
         {entries.length === 0 ? (
-          <div className="p-4 text-sm text-gray-600">
+          <div className="p-4 text-sm text-[var(--muted)]">
             No payroll entries found for this date range.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 text-left">
+              <thead className="bg-[var(--panel-2)] text-left">
                 <tr>
                   <th className="px-4 py-3 font-medium">Date</th>
                   <th className="px-4 py-3 font-medium">Employee</th>
@@ -311,7 +311,7 @@ if (claimsError || !claimsData?.claims) {
         </div>
 
         {Object.keys(groupedByUser).length === 0 ? (
-          <div className="p-4 text-sm text-gray-600">No employee totals yet.</div>
+          <div className="p-4 text-sm text-[var(--muted)]">No employee totals yet.</div>
         ) : (
           <div className="divide-y">
             {Object.entries(groupedByUser).map(([userId, group]) => (
@@ -321,7 +321,7 @@ if (claimsError || !claimsData?.claims) {
               >
                 <div>
                   <div className="font-medium">{group.userName}</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     Hours: {group.totalHours.toFixed(2)} · Overnights: {group.overnightCount}
                   </div>
                 </div>

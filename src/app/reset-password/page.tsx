@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
         <div style={{ display: 'grid', gap: '8px' }}>
           <label htmlFor="password">New password</label>
           <input id="password" type={show ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required autoFocus style={authInput} />
-          <span style={{ fontSize: 13, color: '#6b7280' }}>At least {MIN_LENGTH} characters.</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>At least {MIN_LENGTH} characters.</span>
         </div>
         <div style={{ display: 'grid', gap: '8px' }}>
           <label htmlFor="confirm">Confirm new password</label>
@@ -79,7 +79,7 @@ export default function ResetPasswordPage() {
         <button type="submit" disabled={loading} style={authButton}>
           {loading ? 'Saving…' : 'Save new password'}
         </button>
-        {error ? <p style={{ color: '#b91c1c', margin: 0 }}>{error}</p> : null}
+        {error ? <p style={{ color: 'var(--bad)', margin: 0 }}>{error}</p> : null}
       </form>
     </AuthCard>
   )

@@ -85,12 +85,12 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
   const vendorNames = Array.from(new Set(((vendorRows as { vendor_name: string }[] | null) ?? []).map((r) => r.vendor_name)))
   const shownTotal = invoices.reduce((sum, r) => sum + Number(r.amount), 0)
 
-  const card = { background: 'white', borderRadius: 12, padding: '14px 18px', display: 'grid', gap: 4 } as const
+  const card = { background: 'var(--panel)', borderRadius: 12, padding: '14px 18px', display: 'grid', gap: 4 } as const
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Invoices for Jon</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Bills logged by the team for Jon to review and pay.
       </p>
 
@@ -98,20 +98,20 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 16 }}>
         <div style={card}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>Unpaid total</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>Unpaid total</span>
           <strong style={{ fontSize: 22 }}>{currency.format(unpaidTotal)}</strong>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>{unpaid.length} invoice{unpaid.length === 1 ? '' : 's'}</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>{unpaid.length} invoice{unpaid.length === 1 ? '' : 's'}</span>
         </div>
         <div style={card}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>New (not yet seen)</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>New (not yet seen)</span>
           <strong style={{ fontSize: 22 }}>{newCount}</strong>
         </div>
-        <div style={{ ...card, borderLeft: pastDue.length ? '6px solid #dc2626' : undefined }}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>Past due</span>
-          <strong style={{ fontSize: 22, color: pastDue.length ? '#991b1b' : undefined }}>{pastDue.length}</strong>
-          {pastDue.length ? <span style={{ fontSize: 13, color: '#991b1b' }}>{currency.format(pastDue.reduce((s, r) => s + Number(r.amount), 0))}</span> : null}
+        <div style={{ ...card, borderLeft: pastDue.length ? '6px solid var(--bad)' : undefined }}>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>Past due</span>
+          <strong style={{ fontSize: 22, color: pastDue.length ? 'var(--bad)' : undefined }}>{pastDue.length}</strong>
+          {pastDue.length ? <span style={{ fontSize: 13, color: 'var(--bad)' }}>{currency.format(pastDue.reduce((s, r) => s + Number(r.amount), 0))}</span> : null}
         </div>
-        <Link href="/maintenance/invoices/new" style={{ ...card, background: '#0f172a', color: 'white', textDecoration: 'none', placeContent: 'center', textAlign: 'center' }}>
+        <Link href="/maintenance/invoices/new" style={{ ...card, background: 'var(--accent)', color: 'var(--on-accent)', textDecoration: 'none', placeContent: 'center', textAlign: 'center' }}>
           <strong style={{ fontSize: 17 }}>+ Log an invoice</strong>
         </Link>
       </div>
@@ -128,7 +128,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
             <Link
               key={v.key}
               href={`/maintenance/invoices${s ? `?${s}` : ''}`}
-              style={{ padding: '6px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: '1px solid #d1d5db', background: active ? '#0f172a' : 'white', color: active ? 'white' : '#0f172a' }}
+              style={{ padding: '6px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: '1px solid var(--line)', background: active ? 'var(--accent)' : 'var(--panel)', color: active ? 'var(--on-accent)' : 'var(--text)' }}
             >
               {v.label}
             </Link>
@@ -136,31 +136,31 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
         })}
       </div>
 
-      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', background: 'white', padding: 12, borderRadius: 10, marginBottom: 14 }}>
+      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', background: 'var(--panel)', padding: 12, borderRadius: 10, marginBottom: 14 }}>
         {view.key !== 'unpaid' ? <input type="hidden" name="view" value={view.key} /> : null}
-        <input type="search" name="q" defaultValue={params.q ?? ''} placeholder="Search vendor, invoice #, notes…" aria-label="Search invoices" style={{ flex: 1, minWidth: 200, padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15 }} />
-        <select name="vendor" defaultValue={params.vendor ?? ''} aria-label="Vendor" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white' }}>
+        <input type="search" name="q" defaultValue={params.q ?? ''} placeholder="Search vendor, invoice #, notes…" aria-label="Search invoices" style={{ flex: 1, minWidth: 200, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15 }} />
+        <select name="vendor" defaultValue={params.vendor ?? ''} aria-label="Vendor" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)' }}>
           <option value="">All vendors</option>
           {vendorNames.map((n) => (
             <option key={n} value={n}>{n}</option>
           ))}
         </select>
-        <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, cursor: 'pointer' }}>Search</button>
+        <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, cursor: 'pointer' }}>Search</button>
         {params.q || params.vendor ? <Link href={`/maintenance/invoices${view.key !== 'unpaid' ? `?view=${view.key}` : ''}`} style={{ alignSelf: 'center', fontSize: 14 }}>Clear</Link> : null}
       </form>
 
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           Could not load invoices: {error.message}
         </div>
       ) : null}
 
-      <div style={{ fontSize: 14, color: '#6b7280', marginBottom: 10 }}>
+      <div style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 10 }}>
         {invoices.length} invoice{invoices.length === 1 ? '' : 's'} · {currency.format(shownTotal)}
       </div>
 
       {invoices.length === 0 && !error ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>
           {terms.length || params.vendor ? 'No invoices match this search.' : view.key === 'unpaid' ? 'Nothing waiting on Jon right now.' : 'No invoices here yet.'}
         </div>
       ) : null}
@@ -174,24 +174,24 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
             <Link
               key={inv.id}
               href={`/maintenance/invoices/${inv.id}`}
-              style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center', background: 'white', borderRadius: 12, padding: '14px 16px', textDecoration: 'none', color: 'inherit', borderLeft: `8px solid ${late ? '#dc2626' : inv.status === 'paid' ? '#16a34a' : inv.status === 'disputed' ? '#f87171' : inv.status === 'seen' ? '#f59e0b' : '#3b82f6'}` }}
+              style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center', background: 'var(--panel)', borderRadius: 12, padding: '14px 16px', textDecoration: 'none', color: 'inherit', borderLeft: `8px solid ${late ? 'var(--bad)' : inv.status === 'paid' ? 'var(--ok)' : inv.status === 'disputed' ? '#f87171' : inv.status === 'seen' ? '#f59e0b' : '#3b82f6'}` }}
             >
               <div style={{ display: 'grid', gap: 4 }}>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                   <strong>{inv.vendor_name}</strong>
                   <InvoiceStatusBadge status={inv.status} />
-                  {late ? <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>Past due</span> : null}
-                  {maf ? <span style={{ fontSize: 12, color: '#374151', background: '#f1f5f9', padding: '2px 8px', borderRadius: 999 }}>{maf.maf_number}</span> : null}
-                  {inv.notify_status === 'failed' ? <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fff1f2', border: '1px solid #fecaca', padding: '1px 8px', borderRadius: 999 }}>Alert failed</span> : null}
-                  {inv.notify_status === 'pending' && inv.status === 'new' ? <span style={{ fontSize: 12, color: '#6b7280', border: '1px solid #e5e7eb', padding: '1px 8px', borderRadius: 999 }}>Alert not sent</span> : null}
+                  {late ? <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>Past due</span> : null}
+                  {maf ? <span style={{ fontSize: 12, color: 'var(--text)', background: 'var(--panel-2)', padding: '2px 8px', borderRadius: 999 }}>{maf.maf_number}</span> : null}
+                  {inv.notify_status === 'failed' ? <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', padding: '1px 8px', borderRadius: 999 }}>Alert failed</span> : null}
+                  {inv.notify_status === 'pending' && inv.status === 'new' ? <span style={{ fontSize: 12, color: 'var(--muted)', border: '1px solid var(--line)', padding: '1px 8px', borderRadius: 999 }}>Alert not sent</span> : null}
                 </div>
-                <div style={{ fontSize: 13, color: '#6b7280' }}>
+                <div style={{ fontSize: 13, color: 'var(--muted)' }}>
                   {inv.invoice_number ? `#${inv.invoice_number} · ` : ''}Dated {formatDate(inv.invoice_date)}
                   {inv.due_date ? ` · Due ${formatDate(inv.due_date)}` : ''}
                   {` · ${files} file${files === 1 ? '' : 's'}`}
                   {inv.logged_by_name ? ` · Logged by ${inv.logged_by_name}` : ''}
                 </div>
-                {inv.notes ? <div style={{ fontSize: 14, color: '#374151' }}>{inv.notes.slice(0, 140)}{inv.notes.length > 140 ? '…' : ''}</div> : null}
+                {inv.notes ? <div style={{ fontSize: 14, color: 'var(--text)' }}>{inv.notes.slice(0, 140)}{inv.notes.length > 140 ? '…' : ''}</div> : null}
               </div>
               <strong style={{ fontSize: 18 }}>{currency.format(Number(inv.amount))}</strong>
             </Link>

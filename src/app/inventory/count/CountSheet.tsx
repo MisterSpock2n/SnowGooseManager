@@ -97,9 +97,9 @@ export default function CountSheet({ items }: { items: InventoryItem[] }) {
     setMessage('')
   }
 
-  const select = { padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', fontSize: 14 } as const
+  const select = { padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)', fontSize: 14 } as const
   const btn = (primary: boolean) =>
-    ({ padding: '9px 16px', borderRadius: 8, border: primary ? 'none' : '1px solid #d1d5db', background: primary ? '#0f172a' : 'white', color: primary ? 'white' : '#0f172a', fontWeight: 700, cursor: 'pointer', fontSize: 14 }) as const
+    ({ padding: '9px 16px', borderRadius: 8, border: primary ? 'none' : '1px solid var(--line)', background: primary ? 'var(--accent)' : 'var(--panel)', color: primary ? 'var(--on-accent)' : 'var(--text)', fontWeight: 700, cursor: 'pointer', fontSize: 14 }) as const
 
   return (
     <div>
@@ -113,7 +113,7 @@ export default function CountSheet({ items }: { items: InventoryItem[] }) {
         }
       `}</style>
 
-      <div className="no-print" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', background: 'white', padding: 12, borderRadius: 10, marginBottom: 14 }}>
+      <div className="no-print" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', background: 'var(--panel)', padding: 12, borderRadius: 10, marginBottom: 14 }}>
         <select value={spot} onChange={(e) => setSpot(e.target.value)} aria-label="Storage spot" style={select}>
           <option value="">All storage spots</option>
           {spots.map((s) => (
@@ -133,27 +133,27 @@ export default function CountSheet({ items }: { items: InventoryItem[] }) {
         <button type="button" onClick={() => window.print()} style={btn(false)}>Print sheet</button>
       </div>
 
-      <div className="no-print" style={{ position: 'sticky', top: 0, zIndex: 5, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', background: '#f8fafc', border: '1px solid #e5e7eb', padding: '10px 12px', borderRadius: 10, marginBottom: 14 }}>
+      <div className="no-print" style={{ position: 'sticky', top: 0, zIndex: 5, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', background: 'var(--panel-2)', border: '1px solid var(--line)', padding: '10px 12px', borderRadius: 10, marginBottom: 14 }}>
         <strong>{entered.length} counted</strong>
-        <span style={{ color: '#6b7280', fontSize: 14 }}>of {visible.length} shown</span>
+        <span style={{ color: 'var(--muted)', fontSize: 14 }}>of {visible.length} shown</span>
         <span style={{ flex: 1 }} />
         {entered.length ? <button type="button" onClick={clearAll} style={btn(false)}>Clear</button> : null}
         <button type="button" onClick={save} disabled={busy || !entered.length} style={{ ...btn(true), opacity: entered.length ? 1 : 0.5 }}>
           {busy ? 'Saving…' : `Save counts${entered.length ? ` (${entered.length})` : ''}`}
         </button>
-        {message ? <div style={{ width: '100%', fontSize: 14, color: ok ? '#166534' : '#991b1b' }}>{message}</div> : null}
+        {message ? <div style={{ width: '100%', fontSize: 14, color: ok ? 'var(--ok)' : 'var(--bad)' }}>{message}</div> : null}
       </div>
 
       {groups.length === 0 ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>No items match.</div>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>No items match.</div>
       ) : null}
 
       {groups.map((g) => (
         <section key={g.spot} style={{ marginBottom: 20 }}>
           <h2 style={{ fontSize: '1.15rem', margin: '0 0 8px' }}>
-            {g.spot} <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 14 }}>({g.list.length})</span>
+            {g.spot} <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: 14 }}>({g.list.length})</span>
           </h2>
-          <div style={{ background: 'white', borderRadius: 12, padding: '4px 16px' }}>
+          <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '4px 16px' }}>
             {g.list.map((i) => {
               const s = stockState(i)
               const v = counts[i.id] ?? ''
@@ -161,20 +161,20 @@ export default function CountSheet({ items }: { items: InventoryItem[] }) {
               const bad = v.trim() !== '' && (!Number.isFinite(n) || n < 0)
               const diff = v.trim() !== '' && !bad && s !== 'uncounted' ? n - Number(i.quantity_on_hand) : null
               return (
-                <div key={i.id} className="count-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(160px, 1fr) auto', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
+                <div key={i.id} className="count-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(160px, 1fr) auto', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
                   <div style={{ display: 'grid', gap: 2 }}>
                     <span style={{ fontWeight: 600 }}>
                       <span style={{ width: 10, height: 10, borderRadius: 3, background: categoryInfo(i.category).color, display: 'inline-block', marginRight: 6 }} />
                       {i.name}
                     </span>
-                    <span style={{ fontSize: 13, color: '#6b7280' }}>
+                    <span style={{ fontSize: 13, color: 'var(--muted)' }}>
                       {s === 'uncounted' ? 'Never counted' : `App says ${fmtQty(i.quantity_on_hand)} ${plural(i.unit, Number(i.quantity_on_hand))}`}
                       {diff !== null && diff !== 0 ? (
-                        <strong style={{ marginLeft: 6, color: diff > 0 ? '#166534' : '#991b1b' }}>
+                        <strong style={{ marginLeft: 6, color: diff > 0 ? 'var(--ok)' : 'var(--bad)' }}>
                           ({diff > 0 ? '+' : ''}{fmtQty(diff)})
                         </strong>
                       ) : null}
-                      {diff === 0 ? <span style={{ marginLeft: 6, color: '#166534' }}>matches</span> : null}
+                      {diff === 0 ? <span style={{ marginLeft: 6, color: 'var(--ok)' }}>matches</span> : null}
                     </span>
                   </div>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
@@ -187,9 +187,9 @@ export default function CountSheet({ items }: { items: InventoryItem[] }) {
                       value={v}
                       aria-label={`Count for ${i.name}`}
                       onChange={(e) => setCounts((c) => ({ ...c, [i.id]: e.target.value }))}
-                      style={{ width: 90, padding: '8px 10px', borderRadius: 8, border: `1px solid ${bad ? '#dc2626' : '#d1d5db'}`, fontSize: 16 }}
+                      style={{ width: 90, padding: '8px 10px', borderRadius: 8, border: `1px solid ${bad ? 'var(--bad)' : 'var(--line)'}`, fontSize: 16 }}
                     />
-                    <span style={{ color: '#6b7280', minWidth: 60 }}>{plural(i.unit, 2)}</span>
+                    <span style={{ color: 'var(--muted)', minWidth: 60 }}>{plural(i.unit, 2)}</span>
                   </label>
                 </div>
               )

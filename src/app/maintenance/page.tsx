@@ -39,7 +39,7 @@ type OpenMaf = {
   maintenance_assignees: { name: string; kind: string } | { name: string; kind: string }[] | null
 }
 
-const selectStyle = { padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white' } as const
+const selectStyle = { padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)' } as const
 
 export default async function MaintenancePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
@@ -84,42 +84,42 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Maintenance</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Open Maintenance Action Forms (MAFs), most urgent first.
       </p>
 
       <MaintenanceNav active="open" />
 
       {params.created ? (
-        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--ok-bg)', border: '1px solid var(--ok-line)', color: 'var(--ok)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           {params.created} was created.
         </div>
       ) : null}
 
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           Could not load MAFs: {error.message}
         </div>
       ) : null}
 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
         {counts.map((p) => (
-          <div key={p.value} style={{ background: 'white', borderRadius: 10, padding: '10px 14px', borderLeft: `6px solid ${p.color}`, minWidth: 110 }}>
-            <div style={{ fontSize: 12, color: '#6b7280' }}>{p.short} · {p.label}</div>
+          <div key={p.value} style={{ background: 'var(--panel)', borderRadius: 10, padding: '10px 14px', borderLeft: `6px solid ${p.color}`, minWidth: 110 }}>
+            <div style={{ fontSize: 12, color: 'var(--muted)' }}>{p.short} · {p.label}</div>
             <div style={{ fontSize: 22, fontWeight: 700 }}>{p.count}</div>
           </div>
         ))}
-        <div style={{ background: 'white', borderRadius: 10, padding: '10px 14px', minWidth: 110 }}>
-          <div style={{ fontSize: 12, color: '#6b7280' }}>Overdue</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: overdueCount ? '#b91c1c' : undefined }}>{overdueCount}</div>
+        <div style={{ background: 'var(--panel)', borderRadius: 10, padding: '10px 14px', minWidth: 110 }}>
+          <div style={{ fontSize: 12, color: 'var(--muted)' }}>Overdue</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: overdueCount ? 'var(--bad)' : undefined }}>{overdueCount}</div>
         </div>
-        <div style={{ background: 'white', borderRadius: 10, padding: '10px 14px', minWidth: 110 }}>
-          <div style={{ fontSize: 12, color: '#6b7280' }}>Rooms out of service</div>
+        <div style={{ background: 'var(--panel)', borderRadius: 10, padding: '10px 14px', minWidth: 110 }}>
+          <div style={{ fontSize: 12, color: 'var(--muted)' }}>Rooms out of service</div>
           <div style={{ fontSize: 22, fontWeight: 700 }}>{oosCount}</div>
         </div>
       </div>
 
-      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', background: 'white', padding: 12, borderRadius: 10, marginBottom: 16 }}>
+      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', background: 'var(--panel)', padding: 12, borderRadius: 10, marginBottom: 16 }}>
         <select name="assigned" defaultValue={params.assigned ?? ''} style={selectStyle} aria-label="Assigned to">
           <option value="">All assignees</option>
           {((assignees as Assignee[] | null) ?? []).map((a) => (
@@ -148,14 +148,14 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
           <input type="checkbox" name="oos" value="1" defaultChecked={params.oos === '1'} />
           Rooms out of service only
         </label>
-        <button type="submit" style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+        <button type="submit" style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 600, cursor: 'pointer' }}>
           Filter
         </button>
         {hasFilters ? <Link href="/maintenance" style={{ fontSize: 14 }}>Clear</Link> : null}
       </form>
 
       {mafs.length === 0 && !error ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>
           {hasFilters ? 'No open MAFs match these filters.' : 'No open MAFs. Nice work.'}{' '}
           <Link href="/maintenance/new">Create a MAF</Link>
         </div>
@@ -177,7 +177,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
                 gridTemplateColumns: 'auto 1fr auto',
                 gap: 16,
                 alignItems: 'center',
-                background: 'white',
+                background: 'var(--panel)',
                 borderRadius: 12,
                 padding: '14px 16px',
                 borderLeft: `8px solid ${p.color}`,
@@ -189,31 +189,31 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'baseline' }}>
                   <strong>{maf.maf_number}</strong>
-                  <span style={{ color: '#374151' }}>
+                  <span style={{ color: 'var(--text)' }}>
                     {loc}
                     {maf.location_detail ? ` — ${maf.location_detail}` : ''}
                   </span>
                   {maf.room_out_of_service ? (
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>
                       Room out of service
                     </span>
                   ) : null}
                   {overdue ? (
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>
                       Overdue
                     </span>
                   ) : null}
                 </div>
-                <div style={{ marginTop: 4, color: '#1f2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ marginTop: 4, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {maf.description}
                 </div>
-                <div style={{ marginTop: 4, fontSize: 13, color: '#6b7280' }}>
+                <div style={{ marginTop: 4, fontSize: 13, color: 'var(--muted)' }}>
                   Assigned to {assignee?.name ?? '—'} · Initiated by {maf.initiated_by_name}
                 </div>
               </div>
-              <div style={{ textAlign: 'right', fontSize: 13, color: '#374151' }}>
+              <div style={{ textAlign: 'right', fontSize: 13, color: 'var(--text)' }}>
                 <div style={{ fontWeight: 600 }}>{STATUS_LABELS[maf.status]}</div>
-                <div style={{ color: '#6b7280' }}>{age === 0 ? 'Today' : `${age} day${age === 1 ? '' : 's'} open`}</div>
+                <div style={{ color: 'var(--muted)' }}>{age === 0 ? 'Today' : `${age} day${age === 1 ? '' : 's'} open`}</div>
               </div>
             </Link>
           )

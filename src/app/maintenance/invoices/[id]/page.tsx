@@ -38,8 +38,8 @@ export type InvoiceDetail = {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '170px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
-      <div style={{ color: '#6b7280', fontSize: 14 }}>{label}</div>
+    <div style={{ display: 'grid', gridTemplateColumns: '170px 1fr', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ color: 'var(--muted)', fontSize: 14 }}>{label}</div>
       <div>{children}</div>
     </div>
   )
@@ -80,7 +80,7 @@ export default async function InvoiceDetailPage({
       .order('created_at', { ascending: true }),
   ])
 
-  if (error) return <p style={{ color: '#991b1b' }}>Could not load invoice: {error.message}</p>
+  if (error) return <p style={{ color: 'var(--bad)' }}>Could not load invoice: {error.message}</p>
   if (!data) notFound()
 
   let inv = data as InvoiceDetail
@@ -113,69 +113,69 @@ export default async function InvoiceDetailPage({
       <MaintenanceNav active="invoices" />
 
       {sp.created ? (
-        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
+        <div style={{ background: 'var(--ok-bg)', border: '1px solid var(--ok-line)', color: 'var(--ok)', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
           Invoice saved for Jon.{' '}
           {sp.alert === 'sent' ? 'An email alert was sent to info@snowgooseinn.com.' : sp.alert === 'failed' ? 'The email alert did not go through; see below to try again.' : ''}
         </div>
       ) : null}
       {sp.upload === 'failed' ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
           The invoice was saved, but some files didn&apos;t upload. Please add them again below.
         </div>
       ) : null}
 
-      <div style={{ background: 'white', borderRadius: 12, padding: '8px 24px 16px' }}>
+      <div style={{ background: 'var(--panel)', borderRadius: 12, padding: '8px 24px 16px' }}>
         <Row label="Status">
           <InvoiceStatusBadge status={inv.status} />
-          {late ? <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, color: '#991b1b', background: '#fee2e2', padding: '2px 8px', borderRadius: 999 }}>Past due</span> : null}
+          {late ? <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, color: 'var(--bad)', background: 'var(--bad-bg)', padding: '2px 8px', borderRadius: 999 }}>Past due</span> : null}
           {inv.status_changed_by_name ? (
-            <span style={{ marginLeft: 10, color: '#6b7280', fontSize: 14 }}>
+            <span style={{ marginLeft: 10, color: 'var(--muted)', fontSize: 14 }}>
               by {inv.status_changed_by_name} · {formatDateTime(inv.status_changed_at)}
             </span>
           ) : null}
         </Row>
         <Row label="From">
-          {inv.vendor_name} <span style={{ color: '#6b7280' }}>· <a href={`tel:${inv.vendor_phone.replace(/[^0-9+]/g, '')}`}>{inv.vendor_phone}</a></span>
+          {inv.vendor_name} <span style={{ color: 'var(--muted)' }}>· <a href={`tel:${inv.vendor_phone.replace(/[^0-9+]/g, '')}`}>{inv.vendor_phone}</a></span>
         </Row>
         <Row label="Amount"><strong>{currency.format(Number(inv.amount))}</strong></Row>
-        <Row label="Invoice #">{inv.invoice_number ?? <span style={{ color: '#9ca3af' }}>—</span>}</Row>
+        <Row label="Invoice #">{inv.invoice_number ?? <span style={{ color: 'var(--muted)' }}>—</span>}</Row>
         <Row label="Invoice date">{formatDate(inv.invoice_date)}</Row>
-        <Row label="Due date">{inv.due_date ? formatDate(inv.due_date) : <span style={{ color: '#9ca3af' }}>—</span>}</Row>
+        <Row label="Due date">{inv.due_date ? formatDate(inv.due_date) : <span style={{ color: 'var(--muted)' }}>—</span>}</Row>
         <Row label="Related MAF">
           {maf ? (
             <Link href={`/maintenance/${maf.id}`}>
               {maf.maf_number} — {maf.description.slice(0, 80)}{maf.description.length > 80 ? '…' : ''}
             </Link>
           ) : (
-            <span style={{ color: '#9ca3af' }}>None</span>
+            <span style={{ color: 'var(--muted)' }}>None</span>
           )}
         </Row>
         <Row label="Notes for Jon">
-          {inv.notes ? <div style={{ whiteSpace: 'pre-wrap' }}>{inv.notes}</div> : <span style={{ color: '#9ca3af' }}>None</span>}
+          {inv.notes ? <div style={{ whiteSpace: 'pre-wrap' }}>{inv.notes}</div> : <span style={{ color: 'var(--muted)' }}>None</span>}
         </Row>
         <Row label="Logged by">
-          {inv.logged_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(inv.created_at)}</span>
+          {inv.logged_by_name ?? '—'} <span style={{ color: 'var(--muted)' }}>· {formatDateTime(inv.created_at)}</span>
         </Row>
         {inv.seen_at ? (
           <Row label="Seen">
-            {inv.seen_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(inv.seen_at)}</span>
+            {inv.seen_by_name ?? '—'} <span style={{ color: 'var(--muted)' }}>· {formatDateTime(inv.seen_at)}</span>
           </Row>
         ) : null}
         {inv.paid_at ? (
           <Row label="Paid">
-            {inv.paid_by_name ?? '—'} <span style={{ color: '#6b7280' }}>· {formatDateTime(inv.paid_at)}</span>
+            {inv.paid_by_name ?? '—'} <span style={{ color: 'var(--muted)' }}>· {formatDateTime(inv.paid_at)}</span>
             {inv.paid_note ? <div style={{ fontSize: 14, marginTop: 4 }}>{inv.paid_note}</div> : null}
           </Row>
         ) : null}
         <Row label="Email alert to Jon">
           {inv.notify_status === 'sent' ? (
-            <span style={{ color: '#166534' }}>Notified Jon on {formatDateTime(inv.notified_at)}</span>
+            <span style={{ color: 'var(--ok)' }}>Notified Jon on {formatDateTime(inv.notified_at)}</span>
           ) : inv.notify_status === 'failed' ? (
-            <span style={{ color: '#991b1b' }}>
-              Alert failed to send{inv.notify_error ? <span style={{ color: '#6b7280', fontSize: 13 }}> — {inv.notify_error}</span> : null}
+            <span style={{ color: 'var(--bad)' }}>
+              Alert failed to send{inv.notify_error ? <span style={{ color: 'var(--muted)', fontSize: 13 }}> — {inv.notify_error}</span> : null}
             </span>
           ) : (
-            <span style={{ color: '#6b7280' }}>Not sent yet</span>
+            <span style={{ color: 'var(--muted)' }}>Not sent yet</span>
           )}
           <NotifyJonButton invoiceId={inv.id} status={inv.notify_status} canManage={canManage} hasFiles={files.length > 0} />
         </Row>

@@ -55,37 +55,37 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
   }
 
   const pill = (active: boolean) =>
-    ({ padding: '6px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: '1px solid #d1d5db', background: active ? '#0f172a' : 'white', color: active ? 'white' : '#0f172a' }) as const
-  const card = { background: 'white', borderRadius: 12, padding: '14px 18px', display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' } as const
+    ({ padding: '6px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: '1px solid var(--line)', background: active ? 'var(--accent)' : 'var(--panel)', color: active ? 'var(--on-accent)' : 'var(--text)' }) as const
+  const card = { background: 'var(--panel)', borderRadius: 12, padding: '14px 18px', display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' } as const
 
   return (
     <div style={{ maxWidth: 1150, margin: '0 auto' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Inventory</h1>
-      <p style={{ marginTop: 0, marginBottom: 20, color: '#666' }}>
+      <p style={{ marginTop: 0, marginBottom: 20, color: 'var(--muted)' }}>
         Track maintenance, guest room, breakfast, and cleaning supplies. Log what comes in, what gets used, and do a count to correct totals.
       </p>
       <InventoryNav active="stock" />
 
       {params.added ? (
-        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
+        <div style={{ background: 'var(--ok-bg)', border: '1px solid var(--ok-line)', color: 'var(--ok)', padding: '10px 14px', borderRadius: 8, marginBottom: 14 }}>
           Added {params.added}.
         </div>
       ) : null}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 16 }}>
         <Link href={href({ view: 'low' })} style={{ ...card, borderLeft: lowCount ? `6px solid ${STOCK_STYLES.low.bar}` : undefined }}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>Low or out of stock</span>
-          <strong style={{ fontSize: 22, color: lowCount ? '#9a3412' : undefined }}>{lowCount}</strong>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>Low or out of stock</span>
+          <strong style={{ fontSize: 22, color: lowCount ? 'var(--warn)' : undefined }}>{lowCount}</strong>
         </Link>
         <Link href={href({ view: 'uncounted' })} style={card}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>Needs first count</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>Needs first count</span>
           <strong style={{ fontSize: 22 }}>{uncountedCount}</strong>
         </Link>
         <div style={card}>
-          <span style={{ fontSize: 13, color: '#6b7280' }}>Active items</span>
+          <span style={{ fontSize: 13, color: 'var(--muted)' }}>Active items</span>
           <strong style={{ fontSize: 22 }}>{active.length}</strong>
         </div>
-        <Link href="/inventory/new" style={{ ...card, background: '#0f172a', color: 'white', placeContent: 'center', textAlign: 'center' }}>
+        <Link href="/inventory/new" style={{ ...card, background: 'var(--accent)', color: 'var(--on-accent)', placeContent: 'center', textAlign: 'center' }}>
           <strong style={{ fontSize: 17 }}>+ Add an item</strong>
         </Link>
       </div>
@@ -104,28 +104,28 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
         ))}
       </div>
 
-      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', background: 'white', padding: 12, borderRadius: 10, marginBottom: 14 }}>
+      <form method="get" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', background: 'var(--panel)', padding: 12, borderRadius: 10, marginBottom: 14 }}>
         {view !== 'all' ? <input type="hidden" name="view" value={view} /> : null}
         {cat ? <input type="hidden" name="cat" value={cat} /> : null}
-        <input type="search" name="q" defaultValue={params.q ?? ''} placeholder="Search items, vendors, notes…" aria-label="Search inventory" style={{ flex: 1, minWidth: 200, padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 15 }} />
-        <select name="loc" defaultValue={params.loc ?? ''} aria-label="Storage location" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white' }}>
+        <input type="search" name="q" defaultValue={params.q ?? ''} placeholder="Search items, vendors, notes…" aria-label="Search inventory" style={{ flex: 1, minWidth: 200, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15 }} />
+        <select name="loc" defaultValue={params.loc ?? ''} aria-label="Storage location" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--panel)' }}>
           <option value="">All storage spots</option>
           {locations.map((l) => (
             <option key={l} value={l}>{l}</option>
           ))}
         </select>
-        <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, cursor: 'pointer' }}>Search</button>
+        <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, cursor: 'pointer' }}>Search</button>
         {params.q || params.loc ? <Link href={href({ q: undefined, loc: undefined })} style={{ alignSelf: 'center', fontSize: 14 }}>Clear</Link> : null}
       </form>
 
       {error ? (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
+        <div style={{ background: 'var(--bad-bg)', border: '1px solid var(--bad-line)', color: 'var(--bad)', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
           Could not load inventory: {error.message}
         </div>
       ) : null}
 
       {items.length === 0 && !error ? (
-        <div style={{ background: 'white', borderRadius: 12, padding: 32, textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 32, textAlign: 'center', color: 'var(--muted)' }}>
           {view === 'low' ? 'Nothing is low right now.' : view === 'uncounted' ? 'Every item has been counted.' : 'No items match.'}
         </div>
       ) : null}
@@ -137,26 +137,26 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
           <section key={c.value} style={{ marginBottom: 22 }}>
             <h2 style={{ fontSize: '1.15rem', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ width: 12, height: 12, borderRadius: 3, background: c.color, display: 'inline-block' }} />
-              {c.label} <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 14 }}>({list.length})</span>
+              {c.label} <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: 14 }}>({list.length})</span>
             </h2>
             <div style={{ display: 'grid', gap: 8 }}>
               {list.map((i) => {
                 const s = stockState(i)
                 return (
-                  <div key={i.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) auto', gap: 12, alignItems: 'center', background: 'white', borderRadius: 10, padding: '10px 14px', borderLeft: `6px solid ${STOCK_STYLES[s].bar}` }}>
+                  <div key={i.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) auto', gap: 12, alignItems: 'center', background: 'var(--panel)', borderRadius: 10, padding: '10px 14px', borderLeft: `6px solid ${STOCK_STYLES[s].bar}` }}>
                     <div style={{ display: 'grid', gap: 3 }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                        <Link href={`/inventory/${i.id}`} style={{ fontWeight: 700, color: '#0f172a' }}>{i.name}</Link>
+                        <Link href={`/inventory/${i.id}`} style={{ fontWeight: 700, color: 'var(--text)' }}>{i.name}</Link>
                         <StockBadge state={s} />
                       </div>
-                      <div style={{ fontSize: 13, color: '#6b7280' }}>
-                        <strong style={{ color: '#111827', fontSize: 15 }}>{s === 'uncounted' ? '—' : fmtQty(i.quantity_on_hand)}</strong> {plural(i.unit, Number(i.quantity_on_hand))} on hand
+                      <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+                        <strong style={{ color: 'var(--text)', fontSize: 15 }}>{s === 'uncounted' ? '—' : fmtQty(i.quantity_on_hand)}</strong> {plural(i.unit, Number(i.quantity_on_hand))} on hand
                         {Number(i.reorder_level) > 0 ? ` · reorder at ${fmtQty(i.reorder_level)}` : ''}
                         {i.storage_location ? ` · ${i.storage_location}` : ''}
                         {i.vendor ? ` · ${i.vendor}` : ''}
                       </div>
                     </div>
-                    {i.active ? <StockActions itemId={i.id} itemName={i.name} unit={i.unit} onHand={Number(i.quantity_on_hand)} compact /> : <span style={{ fontSize: 13, color: '#6b7280' }}>Archived</span>}
+                    {i.active ? <StockActions itemId={i.id} itemName={i.name} unit={i.unit} onHand={Number(i.quantity_on_hand)} compact /> : <span style={{ fontSize: 13, color: 'var(--muted)' }}>Archived</span>}
                   </div>
                 )
               })}

@@ -130,23 +130,23 @@ export default function MafParts({
     router.refresh()
   }
 
-  const input = { padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, background: 'white' } as const
+  const input = { padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 14, background: 'var(--panel)' } as const
   // Maintenance supplies first, since that's what most MAFs use
   const order: InventoryCategory[] = ['maintenance', 'cleaning', 'guest_room', 'breakfast_food']
 
   return (
-    <div style={{ background: 'white', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
+    <div style={{ background: 'var(--panel)', borderRadius: 12, padding: 20, display: 'grid', gap: 10 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Parts used</h2>
         {canLog ? (
-          <button type="button" onClick={() => { setOpen(!open); setMessage('') }} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: open ? '#e2e8f0' : 'white', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+          <button type="button" onClick={() => { setOpen(!open); setMessage('') }} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--line)', background: open ? 'var(--line)' : 'var(--panel)', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
             {open ? 'Cancel' : '+ Log a part used'}
           </button>
         ) : null}
       </div>
 
       {open ? (
-        <form onSubmit={submit} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: 8, padding: 10 }}>
+        <form onSubmit={submit} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 8, padding: 10 }}>
           <select value={itemId} onChange={(e) => setItemId(e.target.value)} aria-label="Part" style={{ ...input, minWidth: 240, flex: 1 }} autoFocus>
             <option value="">Pick a part from inventory…</option>
             {order.map((c) => {
@@ -166,31 +166,31 @@ export default function MafParts({
           <label style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
             Amount
             <input type="number" inputMode="decimal" min="0" step="any" value={qty} onChange={(e) => setQty(e.target.value)} style={{ ...input, width: 80 }} />
-            <span style={{ fontWeight: 400, color: '#6b7280' }}>{selected ? plural(selected.unit, Number(qty) || 0) : ''}</span>
+            <span style={{ fontWeight: 400, color: 'var(--muted)' }}>{selected ? plural(selected.unit, Number(qty) || 0) : ''}</span>
           </label>
           <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" aria-label="Note" style={{ ...input, width: 200 }} />
-          <button type="submit" disabled={busy === 'add'} style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="submit" disabled={busy === 'add'} style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', fontWeight: 700, cursor: 'pointer' }}>
             {busy === 'add' ? 'Saving…' : 'Log part'}
           </button>
-          <div style={{ width: '100%', fontSize: 12, color: '#6b7280' }}>
+          <div style={{ width: '100%', fontSize: 12, color: 'var(--muted)' }}>
             This takes the amount out of inventory. Not listed? <Link href="/inventory/new">Add it to inventory</Link> first.
           </div>
         </form>
       ) : null}
 
-      {message ? <div style={{ fontSize: 13, color: ok ? '#166534' : '#991b1b' }}>{message}</div> : null}
+      {message ? <div style={{ fontSize: 13, color: ok ? 'var(--ok)' : 'var(--bad)' }}>{message}</div> : null}
 
       {summary.length === 0 ? (
-        <p style={{ margin: 0, color: '#6b7280' }}>No parts logged for this MAF.</p>
+        <p style={{ margin: 0, color: 'var(--muted)' }}>No parts logged for this MAF.</p>
       ) : (
         <div>
           {summary.map((r) => (
-            <div key={r.itemId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid #f1f5f9', flexWrap: 'wrap' }}>
+            <div key={r.itemId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
               <span>
                 <strong>{fmtQty(r.net)} {plural(r.unit, r.net)}</strong> · <Link href={`/inventory/${r.itemId}`}>{r.name}</Link>
               </span>
               {canLog ? (
-                <button type="button" onClick={() => putBack(r)} disabled={busy === r.itemId} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: 'white', fontSize: 13, cursor: 'pointer' }}>
+                <button type="button" onClick={() => putBack(r)} disabled={busy === r.itemId} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid var(--line)', background: 'var(--panel)', fontSize: 13, cursor: 'pointer' }}>
                   {busy === r.itemId ? 'Saving…' : 'Put back'}
                 </button>
               ) : null}
@@ -200,17 +200,17 @@ export default function MafParts({
       )}
 
       {txns.length ? (
-        <details style={{ fontSize: 13, color: '#4b5563' }}>
+        <details style={{ fontSize: 13, color: 'var(--muted)' }}>
           <summary style={{ cursor: 'pointer' }}>Parts log ({txns.length})</summary>
           {txns.map((t) => {
             const info = one(t.inventory_items)
             return (
-              <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '6px 0', borderBottom: '1px solid #f1f5f9', flexWrap: 'wrap' }}>
+              <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '6px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
                 <span>
                   {t.kind === 'used' ? 'Used' : 'Put back'} {fmtQty(t.quantity)} {plural(info?.unit ?? 'each', Number(t.quantity))} {info?.name ?? ''}
-                  {t.created_by_name ? <span style={{ color: '#6b7280' }}> · by {t.created_by_name}</span> : null}
+                  {t.created_by_name ? <span style={{ color: 'var(--muted)' }}> · by {t.created_by_name}</span> : null}
                 </span>
-                <span style={{ color: '#6b7280' }}>{formatDateTime(t.created_at)}</span>
+                <span style={{ color: 'var(--muted)' }}>{formatDateTime(t.created_at)}</span>
               </div>
             )
           })}
