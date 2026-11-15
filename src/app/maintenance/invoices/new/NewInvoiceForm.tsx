@@ -10,7 +10,7 @@ import type { Assignee } from '@/lib/maintenance'
 export type MafOption = { id: string; label: string; assignedTo: string; closed: boolean }
 
 const OTHER = '__other__'
-const fieldStyle = { display: 'grid', gap: 6 } as const
+const fieldStyle = { display: 'grid', gap: 6, minWidth: 0 } as const
 const inputStyle = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 15, background: 'var(--panel)' } as const
 const labelStyle = { fontWeight: 600, fontSize: 14 } as const
 const optional = <span style={{ fontWeight: 400, color: 'var(--muted)' }}>(optional)</span>

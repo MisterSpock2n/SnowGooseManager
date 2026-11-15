@@ -80,7 +80,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--c); }
+@layer base {
+  a { color: var(--c); }
+}
 
 h1, h2 {
   font-family: var(--font-display);
@@ -113,6 +115,8 @@ textarea {
   border-radius: 10px;
   padding: 9px 12px;
   min-height: 42px;
+  min-width: 0;
+  max-width: 100%;
 }
 textarea { min-height: 80px; }
 input:focus-visible, select:focus-visible, textarea:focus-visible {
