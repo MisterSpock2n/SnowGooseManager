@@ -18,10 +18,14 @@ export const viewport: Viewport = {
   themeColor: '#efece4',
 }
 
+const THEME_SCRIPT = `try{var t=localStorage.getItem('sg-theme');if(t==='night'||t==='day'){document.documentElement.dataset.theme=t;if(t==='night'){document.addEventListener('DOMContentLoaded',function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#05060a')})}}}catch(e){}`
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="day" className={antonio.variable}>
+    <html lang="en" data-theme="day" className={antonio.variable} suppressHydrationWarning>
       <head>
+        {/* Apply the saved Day/Night choice before the page paints */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="" />
         <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet" />
       </head>

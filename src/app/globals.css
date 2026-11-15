@@ -4,7 +4,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 /* Snow Goose Ops 2.0 theme.
-   Day is the default look. The Night (LCARS) look will reuse these same
+   Day is the default look. The Night (LCARS) look reuses the same
    variable names under [data-theme="night"]. */
 :root,
 [data-theme="day"] {
@@ -50,6 +50,75 @@
   --c: var(--frame);
   --accent: var(--c);
   color-scheme: light;
+}
+
+/* Night (LCARS) look: same variable names, dark panels and bright accents */
+[data-theme="night"] {
+  --bg: #05060a;
+  --panel: #0e1018;
+  --panel-2: #151826;
+  --line: #262a3d;
+  --text: #ecebf5;
+  --muted: #a3a6bf;
+  --on-accent: #0a0a0f;
+
+  --dash: #cc99cc;
+  --time: #ff9c3a;
+  --pay: #ffcc88;
+  --maint: #ee7766;
+  --inv: #88aaff;
+
+  --ok: #77ddaa;
+  --ok-bg: #10241b;
+  --ok-line: #24543d;
+  --warn: #ffcc55;
+  --warn-bg: #261f0c;
+  --warn-line: #5a4818;
+  --bad: #ff7b6b;
+  --bad-bg: #2a1212;
+  --bad-line: #66302a;
+  --info: #88aaff;
+  --info-bg: #111a30;
+  --info-line: #2c3d6e;
+
+  --frame: #ff9c3a;
+  --frame-2: #cc99cc;
+  --frame-3: #88aaff;
+  color-scheme: dark;
+}
+
+/* Paper is always printed in the Day colors */
+@media print {
+  [data-theme="night"] {
+  --bg: #efece4;
+  --panel: #ffffff;
+  --panel-2: #f7f5ef;
+  --line: #ddd8cc;
+  --text: #1b1d29;
+  --muted: #5d6072;
+  --on-accent: #ffffff;
+  --dash: #7b4f8e;
+  --time: #c25e00;
+  --pay: #8a5d0c;
+  --maint: #b23a2a;
+  --inv: #2f58c4;
+  --ok: #1f7a4d;
+  --ok-bg: #e6f4ec;
+  --ok-line: #b5dcc6;
+  --warn: #8a5a00;
+  --warn-bg: #fdf3dc;
+  --warn-line: #ecd39a;
+  --bad: #a8321f;
+  --bad-bg: #fbe9e5;
+  --bad-line: #efc1b8;
+  --info: #24479e;
+  --info-bg: #e8eefb;
+  --info-line: #bfcdf0;
+  --frame: #c25e00;
+  --frame-2: #7b4f8e;
+  --frame-3: #2f58c4;
+    color-scheme: light;
+  }
 }
 
 [data-section="dashboard"] { --c: var(--dash); --accent: var(--dash); }
@@ -192,6 +261,8 @@ thead tr { border-bottom: 2px solid var(--c); }
 .topbar {
   grid-column: 2;
   grid-row: 1;
+  position: relative;
+  z-index: 2;
   display: flex;
   gap: 8px;
   padding-left: 8px;
@@ -200,6 +271,23 @@ thead tr { border-bottom: 2px solid var(--c); }
 .topbar .bar { height: 28px; }
 .topbar .bar.a { flex: 1; background: var(--frame); }
 .topbar .bar.b { width: 90px; background: var(--frame-2); }
+.theme-toggle {
+  width: 90px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  background: var(--frame-2);
+  color: var(--on-accent);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: right;
+  cursor: pointer;
+}
+.theme-toggle:hover { filter: brightness(1.12); }
+.theme-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .topbar .bar.c { width: 46px; background: var(--frame-3); border-radius: 0 var(--r-pill) var(--r-pill) 0; }
 
 .side {
@@ -376,7 +464,9 @@ thead tr { border-bottom: 2px solid var(--c); }
 @media (max-width: 820px) {
   .app { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; padding: 8px 8px 0; }
   .elbow { grid-column: 1; grid-row: 1; min-height: 56px; border-top-left-radius: 28px; padding: 8px 16px; }
-  .elbow::after, .topbar { display: none; }
+  .elbow::after, .topbar .bar { display: none; }
+  .topbar { grid-column: 1; grid-row: 1; align-self: center; justify-self: end; padding: 0 12px 0 0; }
+  .theme-toggle { width: auto; height: 30px; border-radius: var(--r-pill); padding: 0 14px; text-align: center; background: var(--panel); color: var(--text); }
   .elbow .brand { font-size: 22px; }
   .app-main { grid-column: 1; grid-row: 3 / 4; padding: 14px 4px 24px; }
   .side {

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from '@/components/LogoutButton'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', section: 'dashboard', color: 'var(--dash)' },
@@ -31,10 +32,10 @@ export default function AppShell({ version, children }: { version: string; child
         <span className="sub">Operations</span>
         <span className="brand">Snow Goose</span>
       </Link>
-      <div className="topbar" aria-hidden="true">
-        <div className="bar a" />
-        <div className="bar b" />
-        <div className="bar c" />
+      <div className="topbar">
+        <div className="bar a" aria-hidden="true" />
+        <ThemeToggle />
+        <div className="bar c" aria-hidden="true" />
       </div>
       <nav className="side" aria-label="Main">
         {NAV.map((n, i) => (
