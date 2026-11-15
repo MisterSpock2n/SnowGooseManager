@@ -2,7 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
+  // If Supabase falls back to the site's home page with a reset code, send it to the reset handler
+  const { pathname, searchParams } = request.nextUrl
+  if (pathname === '/' && searchParams.has('code')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/confirm'
+    url.searchParams.set('next', '/reset-password')
+    return NextResponse.redirect(url)
+  }
+
+  const response = NextResponse.next({
     request,
   })
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 
@@ -64,7 +65,10 @@ export default function LoginPage() {
           </div>
 
           <div style={{ display: 'grid', gap: '8px' }}>
-            <label htmlFor="password">Password</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <label htmlFor="password">Password</label>
+              <Link href="/forgot-password" style={{ fontSize: 14 }}>Forgot password?</Link>
+            </div>
             <input
               id="password"
               type="password"
